@@ -1,5 +1,17 @@
 extends layout
 
 block content
-  h1= title
-  p Welcome to #{title}
+  h1 Posts
+  table.w3-table.w3-striped.w3-centered
+    tr 
+      th Nome
+      th Data
+      th User
+      th Rating
+    for i in posts
+      tr.clickable-row.w3-hover-dark-gray(style="cursor:pointer" data-href="/" + i.id)
+        td= i.name
+        td= i.date
+        td= i.user
+        td= i.rating
+      
