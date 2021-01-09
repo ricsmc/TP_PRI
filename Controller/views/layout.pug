@@ -1,0 +1,30 @@
+doctype html
+html
+  head
+    title= title
+    link(rel='stylesheet', href='/stylesheets/w3.css')
+    link(rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" crossorigin='anonymous')
+  body
+    .w3-bar.w3-blue-grey.w3-border
+      a.w3-bar-item.w3-button(href="#")
+        i.fa.fa-home
+      .w3-dropdown-hover
+        button.w3-button
+          i.fa.fa-bell
+        .w3-dropdown-content.w3-bar-block.w3-card-4
+          a.w3-bar-item.w3-button(href="#") Link 1
+          a.w3-bar-item.w3-button(href="#") Link 2
+          a.w3-bar-item.w3-button(href="#") Link 3
+      .w3-dropdown-hover
+        button.w3-button
+          i.fa.fa-user
+        .w3-dropdown-content.w3-bar-block.w3-car-4
+          a.w3-bar-item.w3-button(href="#") Perfil
+          a.w3-bar-item.w3-button(href="#") Upload
+          a.w3-bar-item.w3-button(href="#") 
+            i.fa.fa-sign-out
+            span  Sign Out
+      input.w3-bar-item.w3-input(type='text' placeholder='Search..')
+      a.w3-bar-item.w3-button(href="#")
+        i.fa.fa-search
+    block content
