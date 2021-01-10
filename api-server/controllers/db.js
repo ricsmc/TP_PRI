@@ -1,5 +1,5 @@
 var mongoose = require('mongoose')
-var User = require('../models/db')
+var User = require('../models/user')
 
 // Listar os users
 module.exports.list = ()=> {
@@ -16,6 +16,12 @@ module.exports.insert = u => {
     console.log(JSON.stringify(u))
     var newUser = new User(u)
     return newUser.save()
+}
+
+// Inserir o "post" p no user :id
+module.exports.insertPost = (u,id) => {
+    console.log(JSON.stringify(u))
+    return User.findByIdAndUpdate(id, u, {new : true})
 }
 
 // Remover o user id
