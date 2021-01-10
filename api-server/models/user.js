@@ -1,6 +1,6 @@
 var mongoose = require('mongoose')
 
-var dbScheema = new mongoose.Schema({
+var userScheema = new mongoose.Schema({
     _id : String,
     password : String,
     pic : String,
@@ -11,13 +11,16 @@ var dbScheema = new mongoose.Schema({
     noti : [{
             text : String
         }],
-    post : [{
+    posts : [{
         id : Number,
         file : String,
         restricitons : String,
         upload_date : Date,
         tags : [String],
-        estrelas : Number,
+        estrelas : {
+            rating : Number,
+            num_ratings : Number
+        },
         comment : [{
             id : Number,
             karma : Number,
@@ -34,4 +37,4 @@ var dbScheema = new mongoose.Schema({
 
 })
 
-module.exports = mongoose.model('db' , dbScheema)
+module.exports = mongoose.model('db' , userScheema)
