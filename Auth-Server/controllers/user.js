@@ -11,17 +11,15 @@ module.exports.lookUp = id => {
     return User.findOne({_id: id}).exec()
 }
 
+module.exports.lookUp10 = p => {
+    return User.find().sort({upload_date : -1})
+}
+
 // Inserir o user u
 module.exports.insert = u => {
     console.log(JSON.stringify(u))
     var newUser = new User(u)
     return newUser.save()
-}
-
-// Inserir o "post" p no user :id
-module.exports.insertPost = (u,id) => {
-    console.log(JSON.stringify(u))
-    return User.findByIdAndUpdate(id, u, {new : true})
 }
 
 // Remover o user id
@@ -32,4 +30,12 @@ module.exports.remove = id => {
 // Editar o user id para u
 module.exports.edit = (id,u) => {
     return User.findByIdAndUpdate(id, u, {new: true})
+}
+
+
+// Funções sobre notificações ---------------
+
+// Inserir Notificação
+module.exports.insertNoti = (c,p) => {
+    return User.findByIdAndUpdate(p,{$push : c},{new:true})
 }

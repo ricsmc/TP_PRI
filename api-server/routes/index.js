@@ -2,75 +2,57 @@ var express = require('express');
 const { route } = require('../app');
 var router = express.Router();
 
-var UserControl = require('../controllers/db')
+var PostControl = require('../controllers/post')
 
 // Listar BD
-router.get('/users', function(req, res, next) {
-  UserControl.list()
+router.get('/posts', function(req, res, next) {
+  PostControl.list()
     .then(data => res.status(200).jsonp(data))
     .catch(err => res.status(500).jsonp(err))
 });
 
 // Procurar user :id
-router.get('/users/:id', function(req, res, next) {
-  UserControl.lookUp(req.params.id)
+router.get('/posts/:id', function(req, res, next) {
+  PostControl.lookUp(req.params.id)
     .then(data => res.status(200).jsonp(data))
     .catch(err => res.status(500).jsonp(err))
 });
 
 // Listar todos os "posts" da página :page
-router.get('/posts/:page', function(req,res,next) {
-  var postArray = []
-  UserControl.list()
+router.get('/posts/page/:page', function(req,res,next) {
+  PostControl.lookUp10()
     .then(data =>{
-      data.forEach(element => {
-        console.log(element.id)
-        element.posts.forEach(e => {
-          e.set('user', element.id, {strict: false})
-          console.log(e)
-          postArray.push(e)
-        });
-      });
-      postArray.sort(sortByProperty("upload_date"))
-      res.status(200).send(get10elements(req.params.page,postArray))
+      //data.sort({upload_date: 1})
+      //data.sort(sortByProperty("upload_date"))
+      res.status(200).send(get10elements(req.params.page,data))
     })
     .catch(err => res.status(500).jsonp(err))
 })
   
 // Post user
-router.post('/users', (req,res) => {
-  UserControl.insert(req.body)
+router.post('/posts', (req,res) => {
+  PostControl.insert(req.body)
+    .then(data => res.status(201).jsonp(data))
+    .catch(err => res.status(500).jsonp({error:err}))
+})
+
+router.delete('/posts/:id' , (req, res) => {
+  PostControl.remove(req.params.id)
     .then(data => res.status(201).jsonp(data))
     .catch(err => res.status(500).jsonp(err))
 })
 
-// Post "post"
-router.post('/users/:id', (req,res) => {
-  
-})
-
-router.delete('/users/:id' , (req, res) => {
-  UserControl.remove(req.params.id)
+router.put('/posts/:id', (req,res) => {
+  PostControl.edit(req.params.id, req.body)
     .then(data => res.status(201).jsonp(data))
     .catch(err => res.status(500).jsonp(err))
 })
 
-router.put('/users/:id', (req,res) => {
-  UserControl.edit(req.params.id, req.body)
+router.post('/comment/:id', (req,res) => {
+  PostControl.insertComment(req.body, req.params.id)
     .then(data => res.status(201).jsonp(data))
-    .catch(err => res.status(500).jsonp(err))
+    .catch(err => res.status(500).jsonp({error:err}))
 })
-
-function sortByProperty(property){  
-  return function(a,b){  
-     if(a[property] > b[property])  
-        return -1;  
-     else if(a[property] < b[property])  
-        return 1;  
- 
-     return 0;  
-  }  
-}
 
 function get10elements(number,arr){
   var array = []
