@@ -20,10 +20,10 @@ router.get('/posts/:id', function(req, res, next) {
 
 // Listar todos os "posts" da página :page
 router.get('/posts/page/:page', function(req,res,next) {
-  console.log('Aqui')
-  PostControl.list()
+  PostControl.lookUp10()
     .then(data =>{
-      data.sort(sortByProperty("upload_date"))
+      //data.sort({upload_date: 1})
+      //data.sort(sortByProperty("upload_date"))
       res.status(200).send(get10elements(req.params.page,data))
     })
     .catch(err => res.status(500).jsonp(err))
@@ -53,17 +53,6 @@ router.post('/comment/:id', (req,res) => {
     .then(data => res.status(201).jsonp(data))
     .catch(err => res.status(500).jsonp({error:err}))
 })
-
-function sortByProperty(property){  
-  return function(a,b){  
-     if(a[property] > b[property])  
-        return -1;  
-     else if(a[property] < b[property])  
-        return 1;  
- 
-     return 0;  
-  }  
-}
 
 function get10elements(number,arr){
   var array = []

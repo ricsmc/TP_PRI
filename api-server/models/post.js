@@ -4,25 +4,25 @@ var postScheema = new mongoose.Schema({
     id : Number,
     file : String,
     restricitons : String,
-    upload_date : Date,
+    upload_date : {type:Date, default: Date.now},
     id_user : String,
     tags : [String],
     estrelas : {
-        rating : Number,
-        num_ratings : Number
+        rating : {type:Number, default: 0},
+        num_ratings : {type:Number, default: 0}
     },
     comment : [{
         id : Number,
         karma : {type:Number, default: 0},
         comment : String,
         id_user : String,
-        data : Date,
+        data : {type:Date, default: Date.now},
         res : [{
             id : Number,
-            karma : Number,
+            karma : {type:Number, default: 0},
             response : String,
             id_user : String,
-            data : Date
+            data : {type:Date, default: Date.now}
         }]
     }]
 

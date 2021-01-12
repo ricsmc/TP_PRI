@@ -11,6 +11,10 @@ module.exports.lookUp = id => {
     return Post.findOne({_id: id}).exec()
 }
 
+module.exports.lookUp10 = p => {
+    return Post.find().sort({upload_date : -1})
+}
+
 // Inserir o post u
 module.exports.insert = u => {
     console.log(JSON.stringify(u))
