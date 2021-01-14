@@ -43,7 +43,7 @@ passport.serializeUser((user,done) => {
 // Desserialização : a partir do id obtém-se a informação do utilizador
 passport.deserializeUser((uname,done) => {
   console.log('Desserialização, id: ' + uname)
-  User.consultar(uname)
+  User.lookUp(uname)
     .then(dados => done(null,dados))
     .catch(erro => done(erro, false))
 })

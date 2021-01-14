@@ -9,7 +9,7 @@ var userSchema = new mongoose.Schema({
     username : String,
     password : String,
     pic : String,
-    type : String,
+    level : String,
     filiation : String,
     register_date : {type:Date, default:Date.now},
     desc : String,
