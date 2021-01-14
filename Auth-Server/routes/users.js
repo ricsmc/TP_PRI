@@ -1,7 +1,19 @@
 var express = require('express');
 var router = express.Router();
-
+var passport = require('passport')
 var UserControl = require('../controllers/user')
+var jwt = require('jsonwebtoken');
+const user = require('../models/user');
+
+router.post('/login', passport.authenticate('local'), function(req,res){
+  jwt.sign({username: req.user.username, level: req.user.level, 
+            sub:'Trabalho de PRI2020'},
+            "PRI2020",
+            function(e,token){
+              if(e) res.status(500).jsonp({error: "Erro na geração do token: " + e})
+              else res.status(201).jsonp({token: token})
+  });
+})
 
 /* GET users listing. */
 router.get('/', function(req, res, next) {

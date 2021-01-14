@@ -8,7 +8,7 @@ module.exports.list = ()=> {
 
 // Procurar o user id
 module.exports.lookUp = id => {
-    return User.findOne({_id: id}).exec()
+    return User.findOne({username: id}).exec()
 }
 
 module.exports.lookUp10 = p => {
