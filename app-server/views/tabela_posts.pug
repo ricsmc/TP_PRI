@@ -1,0 +1,75 @@
+extends layout
+
+block content
+  h1 Posts
+  table.w3-table.w3-striped.w3-centered
+    tr 
+      th Nome
+      th Data
+      th User
+      th Rating
+    for i in posts
+      tr.clickable-row.w3-hover-dark-gray(style="cursor:pointer" data-href="/" + i.id)
+        td= i.file
+        - console.log(i.upload_date)
+        - var data = Math.abs(Date.parse(i.upload_date) - new Date())
+        if(data < 1000*60)
+          td= "há uns segundos"
+        else if(data < 1000*60*60)
+          td= parseInt(data/(1000*60),10) + ' minutos' 
+        else if(data<1000*60*60*24)
+          td= parseInt(data / (1000*60*60),10) + ' horas' 
+        else if(data < 1000*60*60*24*31)
+          td= parseInt(data / (1000*60*60*24),10) + ' dias' 
+        else if(data < 1000*60*60*24*365)
+          td= parseInt(data / (1000*60*60*24*31),10) + ' meses' 
+        else 
+          td= parseInt(data / (1000*60*60*24*365),10) + ' anos' 
+        td= i.id_user
+        if(parseInt(i.estrelas.num_ratings,10) == 0)
+          td= "sem rating"
+        else 
+          td= parseInt(i.estrelas.rating,10) / parseInt(i.estrelas.num_ratings,10) + "/5"
+
+  .w3-center
+    .w3-bar.w3-border
+      if current_page != 1
+        - var pag = current_page - 1
+        a.w3-button(href="/posts/"+(pag)) &laquo
+      - var i = 1;
+      if pages <= 6
+        while i <= pages
+          if i == current_page
+            a.w3-button.w3-blue-grey(href="/"+(i)) #{i++} 
+          else 
+            a.w3-button(href="/posts/"+(i)) #{i++} 
+      else 
+        if current_page >= 5
+          a.w3-button(href="/posts/1") 1
+          if current_page > 5 && pages > 6
+            a.w3-button ...
+        if current_page < 4
+          - i = 1
+        else 
+          - i = current_page - 3
+        - var j = current_page - (-1)
+        if current_page == pages 
+          - --j
+        while i <= j
+          if i == current_page
+            a.w3-button.w3-blue-grey #{i++} 
+          else 
+            a.w3-button(href="/posts/"+(i)) #{i++}
+        if current_page < 4
+          - i = current_page - (-2)
+          while i <= 5
+            a.w3-button(href="/posts/"+(i)) #{i++}
+        if current_page <= pages - 3 
+          a.w3-button ... 
+        if current_page < pages - 1
+          a.w3-button(href="/posts/"+(pages)) #{pages} 
+      if current_page != pages
+        - var pag = ++current_page 
+        a.w3-button(href="/posts/"+(pag)) &raquo
+      
+      
