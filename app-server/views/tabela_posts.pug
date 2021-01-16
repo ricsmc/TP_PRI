@@ -16,15 +16,15 @@ block content
         if(data < 1000*60)
           td= "há uns segundos"
         else if(data < 1000*60*60)
-          td= parseInt(data/(1000*60),10) + ' minutos' 
+          td= 'há ' + parseInt(data/(1000*60),10) + ' minutos' 
         else if(data<1000*60*60*24)
-          td= parseInt(data / (1000*60*60),10) + ' horas' 
+          td= 'há ' + parseInt(data / (1000*60*60),10) + ' horas' 
         else if(data < 1000*60*60*24*31)
-          td= parseInt(data / (1000*60*60*24),10) + ' dias' 
+          td= 'há ' + parseInt(data / (1000*60*60*24),10) + ' dias' 
         else if(data < 1000*60*60*24*365)
-          td= parseInt(data / (1000*60*60*24*31),10) + ' meses' 
+          td= 'há ' + parseInt(data / (1000*60*60*24*31),10) + ' meses' 
         else 
-          td= parseInt(data / (1000*60*60*24*365),10) + ' anos' 
+          td= 'há ' + parseInt(data / (1000*60*60*24*365),10) + ' anos' 
         td= i.id_user
         if(parseInt(i.estrelas.num_ratings,10) == 0)
           td= "sem rating"
