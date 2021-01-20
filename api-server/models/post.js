@@ -2,6 +2,9 @@ var mongoose = require('mongoose')
 
 var postScheema = new mongoose.Schema({
     id : Number,
+    type : String,
+    titulo: String,
+    descricao: String,
     file : String,
     restricitons : String,
     upload_date : {type:Date, default: Date.now},

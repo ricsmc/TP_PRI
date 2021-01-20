@@ -1,20 +1,8 @@
 var express = require('express');
 var router = express.Router();
 var axios = require('axios');
+var cookieParser = require('cookie-parser')
 
-if( typeof localStorage === "undefined" || localStorage === null){
-  var LocalStorage = require('node-localstorage').LocalStorage;
-  localStorage = new LocalStorage('./localState');
-}
-
-router.post('/localTest', function(req,res){
-  localStorage.setItem('teste', 'Isto é um teste');
-  res.jsonp('Teste criado');
-})
-
-router.get('/localTest', function(req,res){
-  res.jsonp(res.jsonp(localStorage.getItem('teste')));
-})
 
 router.get('/login', function(req,res){
   res.render('login-form');
@@ -23,7 +11,7 @@ router.get('/login', function(req,res){
 router.post('/login', function(req,res){
   axios.post('http://localhost:7002/users/login', req.body)
     .then(dados => {
-      localStorage.setItem('myToken', dados.data.token);
+      res.cookie("token", dados.data.token, {expire: 3600000 + Date.now()});
       res.redirect('/posts')
     })
     .catch(e => {
@@ -37,7 +25,8 @@ router.get('/', (req,res,next) => res.render('index', {}))
 
 
 router.get('/posts', function(req, res, next) {
-  var t = localStorage.getItem('myToken');
+  if (!req.cookies.token) return res.status(401).send();
+  var t = req.cookies.token;
   axios.get('http://localhost:7001/posts/page/1?token=' + t)
     .then(dados => res.render('tabela_posts', {posts:dados.data, pages:4, current_page:1}))
     .catch(e => res.render('error', {error:e}))
@@ -47,7 +36,8 @@ router.get('/posts', function(req, res, next) {
 });
 
 router.get('/posts/:page', function(req, res, next) {
-  var t = localStorage.getItem('myToken');
+  if (!req.cookies.token) return res.status(401).send();
+  var t = req.cookies.token;
   axios.get('http://localhost:7001/posts/page/'+ req.params.page + '?token=' + t)
     .then(dados => {
       console.log('Data recebida : ' + dados.data.upload_date)
