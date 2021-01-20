@@ -1,0 +1,33 @@
+doctype html
+html
+  head
+    title= Register
+    script(src="/javascripts/jquery-3.5.1.min.js")
+    script(src="/javascripts/scripts.js")
+    link(rel='stylesheet', href='/stylesheets/w3.css')
+    link(rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" crossorigin='anonymous')
+  body
+  .w3-container.w3-margin
+    .w3-container.w3-blue
+        h3 Introduza as suas credênciais
+    form.w3-container(action='/register' method='POST')
+        if (username) 
+            .w3-panel.w3-pale-red
+                p.w3-red #{username}
+        label Username:
+        input.w3-input(type="text" name="username")
+        
+        input.w3-radio(type='radio' name='filiation' value='aluno' checked)
+        label Aluno
+        input.w3-radio(type='radio' name='filiation' value='professor')
+        label Professor
+
+        label Password:
+        input.w3-input(type="password" name="password")
+        if (cpassword) 
+            .w3-panel.w3-pale-red
+                p #{cpassword}
+        label Confirmar Password:
+        input.w3-input(type="password" name="cpassword")
+
+        input.w3-btn-blue(type="submit" value="Register")

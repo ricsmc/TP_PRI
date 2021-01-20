@@ -8,11 +8,11 @@ var notiSchema = new mongoose.Schema({
 var userSchema = new mongoose.Schema({
     username : String,
     password : String,
-    pic : String,
-    level : String,
+    pic : {type: String, default:""},
+    level : {type: String, default:"consumer"},
     filiation : String,
     register_date : {type:Date, default:Date.now},
-    desc : String,
+    desc : {type: String, default:""},
     noti : {type: [notiSchema], default:[]},
     posts : {type: [String], default:[]}
 })
