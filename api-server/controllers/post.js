@@ -37,3 +37,7 @@ module.exports.edit = (id,u) => {
 module.exports.insertComment = (c,p) => {
     return Post.findByIdAndUpdate(p,{$push : c},{new:true})
 }
+
+module.exports.countSize = () => {
+    return Post.countDocuments({})
+}

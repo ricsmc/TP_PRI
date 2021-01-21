@@ -35,17 +35,17 @@ block content
     .w3-bar.w3-border
       if current_page != 1
         - var pag = current_page - 1
-        a.w3-button(href="/posts/"+(pag)) &laquo
+        a.w3-button(href="/posts/page/"+(pag)) &laquo
       - var i = 1;
       if pages <= 6
         while i <= pages
           if i == current_page
-            a.w3-button.w3-blue-grey(href="/"+(i)) #{i++} 
+            a.w3-button.w3-blue-grey(href="/posts/page/"+(i)) #{i++} 
           else 
-            a.w3-button(href="/posts/"+(i)) #{i++} 
+            a.w3-button(href="/posts/page/"+(i)) #{i++} 
       else 
         if current_page >= 5
-          a.w3-button(href="/posts/1") 1
+          a.w3-button(href="/posts/page/1") 1
           if current_page > 5 && pages > 6
             a.w3-button ...
         if current_page < 4
@@ -59,17 +59,17 @@ block content
           if i == current_page
             a.w3-button.w3-blue-grey #{i++} 
           else 
-            a.w3-button(href="/posts/"+(i)) #{i++}
+            a.w3-button(href="/posts/page/"+(i)) #{i++}
         if current_page < 4
           - i = current_page - (-2)
           while i <= 5
-            a.w3-button(href="/posts/"+(i)) #{i++}
+            a.w3-button(href="/posts/page/"+(i)) #{i++}
         if current_page <= pages - 3 
           a.w3-button ... 
         if current_page < pages - 1
-          a.w3-button(href="/posts/"+(pages)) #{pages} 
+          a.w3-button(href="/posts/page/"+(pages)) #{pages} 
       if current_page != pages
         - var pag = ++current_page 
-        a.w3-button(href="/posts/"+(pag)) &raquo
+        a.w3-button(href="/posts/page/"+(pag)) &raquo
       
       
