@@ -27,6 +27,13 @@ router.get('/posts/page/:page', function(req,res,next) {
     })
     .catch(err => res.status(500).jsonp(err))
 })
+
+router.post('/posts/comment/:id', (req,res) => {
+  PostControl.insertComment(req.body,req.params.id)
+    .then(data => res.status(201).jsonp(data))
+    .catch(err => res.status(500).jsonp({error:err}))
+})
+
   
 // Post user
 router.post('/posts', (req,res) => {

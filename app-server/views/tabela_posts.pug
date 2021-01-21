@@ -9,7 +9,7 @@ block content
       th User
       th Rating
     for i in posts
-      tr.clickable-row.w3-hover-dark-gray(style="cursor:pointer" data-href="/" + i.id)
+      tr.clickable-row.w3-hover-dark-gray(style="cursor:pointer" data-href="/posts/" + i._id)
         td= i.file
         - console.log(i.upload_date)
         - var data = Math.abs(Date.parse(i.upload_date) - new Date())

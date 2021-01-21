@@ -11,7 +11,6 @@
         {
             "file" : "file.png",
             "restrictions" : "public",
-            "upload_date" : "{{currentDate}}",
             "tags" : ["pri"],
             "estrelas" : {
                 "rating": 60,

@@ -1,7 +1,12 @@
 var mongoose = require('mongoose')
 
-var postScheema = new mongoose.Schema({
-    id : Number,
+var commentSchema = new mongoose.Schema({
+    comment : String,
+    username : String,
+    data : {type:Date, default: Date.now},
+})
+
+var postSchema = new mongoose.Schema({
     type : String,
     titulo: String,
     descricao: String,
@@ -9,26 +14,12 @@ var postScheema = new mongoose.Schema({
     restricitons : String,
     upload_date : {type:Date, default: Date.now},
     id_user : String,
-    tags : [String],
+    tags : {type: [String], default:[]},
     estrelas : {
         rating : {type:Number, default: 0},
         num_ratings : {type:Number, default: 0}
     },
-    comment : [{
-        id : Number,
-        karma : {type:Number, default: 0},
-        comment : String,
-        id_user : String,
-        data : {type:Date, default: Date.now},
-        res : [{
-            id : Number,
-            karma : {type:Number, default: 0},
-            response : String,
-            id_user : String,
-            data : {type:Date, default: Date.now}
-        }]
-    }]
-
+    comment : {type: [commentSchema], default:[]}
 })
 
-module.exports = mongoose.model('db' , postScheema)
+module.exports = mongoose.model('db' , postSchema)

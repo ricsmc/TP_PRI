@@ -28,7 +28,6 @@ router.get('/register', function(req,res){
 })
 
 router.post('/register', function(req,res){
-  console.log(req.body.password + "," + req.body.cpassword)
   if (req.body.password != req.body.cpassword) { 
     res.render('register-form', {cpassword:"Passwords não são iguais"});
   }
@@ -53,20 +52,33 @@ router.post('/register', function(req,res){
 router.get('/', (req,res,next) => res.render('index', {}))
 
 
+router.post('/posts/:id' , function(req,res,next){
+  var json = {comment : {comment: req.body.comment, username: req.cookies.access.username}}
+  req.body= json
+  axios.post('http://localhost:7001/posts/comment/'+ req.params.id +'?token=' + req.cookies.access.token, req.body)
+    .then(dados => res.redirect('/posts/'+ req.params.id))
+    .catch(e => res.render('error', {error:e}))
+})
+
 
 router.get('/posts', function(req, res, next) {
-  if (!req.cookies.access.token) return res.status(401).send();
+  if (!req.cookies.access.token)  res.redirect('/login')
   var t = req.cookies.access.token;
   axios.get('http://localhost:7001/posts/page/1?token=' + t)
     .then(dados => res.render('tabela_posts', {posts:dados.data, pages:4, current_page:1}))
     .catch(e => res.render('error', {error:e}))
-    //var json = [{id:'d9da0wdu', name:'Express',user:'jrc' ,date:'2020', rating:2}, { id:'d94a0wdu',user:'jcr' ,name:'Node', date:'2020', rating:2}];
-  
-  //res.render('tabela_posts', {posts:json,pages:4, current_page:1});
-});
+ });
+
+ router.get('/posts/:id', function(req, res, next) {
+  if (!req.cookies.access.token)  res.redirect('/login')
+  var t = req.cookies.access.token;
+  axios.get('http://localhost:7001/posts/'+ req.params.id + '?token=' + t)
+    .then(dados => res.render('single_post', {post:dados.data}))
+    .catch(e => res.render('error', {error:e}))
+ });
 
 router.get('/posts/:page', function(req, res, next) {
-  if (!req.cookies.access.token) return res.status(401).send();
+  if (!req.cookies.access.token) res.redirect('/login')
   var t = req.cookies.access.token;
   axios.get('http://localhost:7001/posts/page/'+ req.params.page + '?token=' + t)
     .then(dados => {
