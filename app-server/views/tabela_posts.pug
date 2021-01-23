@@ -8,6 +8,8 @@ block content
       th Data
       th User
       th Rating
+      if(access.level=="admin")
+        th Editar
     for i in posts
       tr.clickable-row.w3-hover-dark-gray(style="cursor:pointer" data-href="/posts/" + i._id)
         td= i.file
@@ -30,6 +32,9 @@ block content
           td= "sem rating"
         else 
           td= (parseInt(i.rating.total,10) / parseInt(i.rating.num,10)).toFixed(2) + "/5"
+        if(access.level=="admin")
+          td 
+            a(href="/posts/remove/" + i._id) Remover
 
   .w3-center
     .w3-bar.w3-border

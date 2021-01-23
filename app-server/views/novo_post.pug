@@ -1,0 +1,25 @@
+extends layout
+
+block content
+    h1 Criar um novo post
+    form.w3-container(action='/posts' method='POST')
+        label Tipo:
+        input.w3-input(type='text' name="type")
+
+        label Título:
+        input.w3-input(type='text' name="titulo")
+
+        label Descrição:
+        input.w3-input(type='text' name="descricao")
+
+        label Filename:
+        input.w3-input(type='text' name="file")
+        
+        label Restrições:
+        input.w3-check(type='checkbox' value="public" checked='checked' name="restrictions")
+        label Public
+        input.w3-check(type='checkbox' value="private" name="restrictions")
+        label Private
+        
+
+        input.w3-btn-.w3-round-large.w3-white.w3-border(type="submit" value="Submeter")

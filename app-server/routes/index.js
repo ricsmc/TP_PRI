@@ -48,15 +48,34 @@ router.post('/register', function(req,res){
 })
 
 /* GET home page. */
-router.get('/', (req,res,next) => res.render('index', {}))
+router.get('/', (req,res,next) => res.render('index', {access:req.cookies.access}))
 
+
+router.get('/posts/new' , function(req,res,next){
+  res.render('novo_post', {access:req.cookies.access});
+})
+
+router.post('/posts' , function(req,res,next){
+  req.body.id_user = req.cookies.access.username
+  axios.post('http://localhost:7001/posts?token=' + req.cookies.access.token, req.body)
+    .then(dados => res.redirect('/posts/'+ dados.data._id))
+    .catch(e => res.render('error', {error:e,access:req.cookies.access}))
+})
+
+
+router.get('/posts/remove/:id' , function(req,res,next){
+  console.log('oi')
+  axios.delete('http://localhost:7001/posts/'+ req.params.id +'?token=' + req.cookies.access.token)
+    .then(dados => res.redirect('/posts'))
+    .catch(e => res.render('error', {error:e,access:req.cookies.access}))
+})
 
 router.post('/posts/comment/:id' , function(req,res,next){
   var json = {comment : {comment: req.body.comment, username: req.cookies.access.username}}
   req.body= json
   axios.put('http://localhost:7001/posts/comment/'+ req.params.id +'?token=' + req.cookies.access.token, req.body)
     .then(dados => res.redirect('/posts/'+ req.params.id))
-    .catch(e => res.render('error', {error:e}))
+    .catch(e => res.render('error', {error:e,access:req.cookies.access}))
 })
 
 router.post('/posts/rating/:id' , function(req,res,next){
@@ -66,7 +85,7 @@ router.post('/posts/rating/:id' , function(req,res,next){
   console.log(req.body)
   axios.put('http://localhost:7001/posts/rating/'+ req.params.id +'?token=' + req.cookies.access.token, req.body)
     .then(dados => res.redirect('/posts/'+ req.params.id))
-    .catch(e => res.render('error', {error:e}))
+    .catch(e => res.render('error', {error:e,access:req.cookies.access}))
 })
 
 
@@ -77,17 +96,17 @@ router.get('/posts', function(req, res, next) {
     .then(dados => {
       console.log(dados.data)
       var paginas = (dados.data.size / 10)+1
-      res.render('tabela_posts', {posts:dados.data.posts, pages:paginas, current_page:1})
+      res.render('tabela_posts', {posts:dados.data.posts, pages:paginas, current_page:1,access:req.cookies.access})
     })
-    .catch(e => res.render('error', {error:e}))
+    .catch(e => res.render('error', {error:e,access:req.cookies.access}))
  });
 
  router.get('/posts/:id', function(req, res, next) {
   if (!req.cookies.access.token)  res.redirect('/login')
   var t = req.cookies.access.token;
   axios.get('http://localhost:7001/posts/'+ req.params.id + '?token=' + t)
-    .then(dados => res.render('single_post', {post:dados.data}))
-    .catch(e => res.render('error', {error:e}))
+    .then(dados => res.render('single_post', {post:dados.data,access:req.cookies.access}))
+    .catch(e => res.render('error', {error:e,access:req.cookies.access}))
  });
 
 router.get('/posts/page/:page', function(req, res, next) {
@@ -96,10 +115,10 @@ router.get('/posts/page/:page', function(req, res, next) {
   axios.get('http://localhost:7001/posts/page/'+ req.params.page + '?token=' + t)
     .then(dados => {
       var paginas = (dados.data.size / 10)+1
-      res.render('tabela_posts', {posts:dados.data.posts , pages:paginas, current_page:req.params.page})
+      res.render('tabela_posts', {posts:dados.data.posts , pages:paginas, current_page:req.params.page,access:req.cookies.access})
 
   })
-    .catch(e => res.render('error', {error:e}))
+    .catch(e => res.render('error', {error:e,access:req.cookies.access}))
 });
 
 module.exports = router;

@@ -58,16 +58,17 @@ router.put('/posts/:id', (req,res) => {
 })
 
 
+
 router.put('/posts/rating/:id', function(req, res, next) {
   PostControl.insertNewRating(req.params.id,req.body)
     .then(data => {
-      if(!data){
+      if(data==null){
         PostControl.insertRating(req.params.id,req.body)
           .then(dados => res.status(200).jsonp(dados))
           .catch(err => res.status(500).jsonp({err:err}))
       }
       else{
-        res.status(200).jsonp(dados)
+        res.status(201).jsonp(data)
       }
     })
     .catch(err => res.status(500).jsonp(err))
