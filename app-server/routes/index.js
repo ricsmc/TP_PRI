@@ -75,6 +75,7 @@ router.get('/posts', function(req, res, next) {
   var t = req.cookies.access.token;
   axios.get('http://localhost:7001/posts/page/1?token=' + t)
     .then(dados => {
+      console.log(dados.data)
       var paginas = (dados.data.size / 10)+1
       res.render('tabela_posts', {posts:dados.data.posts, pages:paginas, current_page:1})
     })

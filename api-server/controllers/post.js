@@ -6,8 +6,10 @@ module.exports.list = ()=> {
     return Post.find().exec()
 }
 
-module.exports.lookUp10 = p => {
-    return Post.find().sort({upload_date : -1})
+module.exports.lookUp10 = () => {
+    return Post.aggregate([{$project:{
+        tags:"$tags",_id:"$_id",file:"$file",comment:"$comment",id_user:"$id_user",titulo:"$titulo",descricao:"$descricao",upload_date:"$upload_date",rating:{total:{$sum:{$sum:"$estrelas.rating"}},num:{$size:"$estrelas"}}
+    }}]).sort({upload_date : -1})
 }
 
 // Inserir o post u
