@@ -14,7 +14,9 @@ router.get('/posts', function(req, res, next) {
 // Procurar user :id
 router.get('/posts/:id', function(req, res, next) {
   PostControl.lookUp(req.params.id)
-    .then(data => res.status(200).jsonp(data))
+    .then(data => {
+      res.status(200).jsonp(data[0])
+    })
     .catch(err => res.status(500).jsonp(err))
 });
 
@@ -29,7 +31,7 @@ router.get('/posts/page/:page', function(req,res,next) {
     .catch(err => res.status(500).jsonp(err))
 })
 
-router.post('/posts/comment/:id', (req,res) => {
+router.put('/posts/comment/:id', (req,res) => {
   PostControl.insertComment(req.body,req.params.id)
     .then(data => res.status(201).jsonp(data))
     .catch(err => res.status(500).jsonp({error:err}))
@@ -55,11 +57,21 @@ router.put('/posts/:id', (req,res) => {
     .catch(err => res.status(500).jsonp(err))
 })
 
-router.post('/comment/:id', (req,res) => {
-  PostControl.insertComment(req.body, req.params.id)
-    .then(data => res.status(201).jsonp(data))
-    .catch(err => res.status(500).jsonp({error:err}))
-})
+
+router.put('/posts/rating/:id', function(req, res, next) {
+  PostControl.insertNewRating(req.params.id,req.body)
+    .then(data => {
+      if(!data){
+        PostControl.insertRating(req.params.id,req.body)
+          .then(dados => res.status(200).jsonp(dados))
+          .catch(err => res.status(500).jsonp({err:err}))
+      }
+      else{
+        res.status(200).jsonp(dados)
+      }
+    })
+    .catch(err => res.status(500).jsonp(err))
+});
 
 
 

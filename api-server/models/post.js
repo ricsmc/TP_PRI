@@ -6,6 +6,11 @@ var commentSchema = new mongoose.Schema({
     data : {type:Date, default: Date.now},
 })
 
+var ratingSchema = new mongoose.Schema({
+    _id: String,
+    rating: Number
+})
+
 var postSchema = new mongoose.Schema({
     type : String,
     titulo: String,
@@ -15,10 +20,7 @@ var postSchema = new mongoose.Schema({
     upload_date : {type:Date, default: Date.now},
     id_user : String,
     tags : {type: [String], default:[]},
-    estrelas : {
-        rating : {type:Number, default: 0},
-        num_ratings : {type:Number, default: 0}
-    },
+    estrelas : {type: [ratingSchema], default:[]},
     comment : {type: [commentSchema], default:[]}
 })
 

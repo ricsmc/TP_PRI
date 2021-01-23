@@ -6,11 +6,6 @@ module.exports.list = ()=> {
     return Post.find().exec()
 }
 
-// Procurar o post id
-module.exports.lookUp = id => {
-    return Post.findOne({_id: id}).exec()
-}
-
 module.exports.lookUp10 = p => {
     return Post.find().sort({upload_date : -1})
 }
@@ -40,4 +35,20 @@ module.exports.insertComment = (c,p) => {
 
 module.exports.countSize = () => {
     return Post.countDocuments({})
+}
+
+module.exports.lookUp = p => {
+    return Post.aggregate([{"$match":{"_id":new mongoose.Types.ObjectId(p)}},{$project:{
+        tags:"$tags",_id:"$_id",file:"$file",comment:"$comment",id_user:"$id_user",titulo:"$titulo",descricao:"$descricao",upload_date:"$upload_date",rating:{total:{$sum:{$sum:"$estrelas.rating"}},num:{$size:"$estrelas"}}
+    }}])
+}
+
+module.exports.insertNewRating = (p,r) => {
+    console.log(r._id)
+    return Post.findOneAndUpdate({_id:p, "estrelas._id":{$ne: r._id}} ,{$push:{estrelas:r}},{new:true})
+}
+
+module.exports.insertRating = (p,r) => {
+    console.log(r._id)
+    return Post.findOneAndUpdate({_id:p,'estrelas._id':r._id},{$set:{'estrelas.$.rating':r.rating}},{new:true})
 }

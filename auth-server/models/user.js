@@ -5,6 +5,7 @@ var notiSchema = new mongoose.Schema({
     text: String
 })
 
+
 var userSchema = new mongoose.Schema({
     username : String,
     password : String,
@@ -15,6 +16,7 @@ var userSchema = new mongoose.Schema({
     desc : {type: String, default:""},
     noti : {type: [notiSchema], default:[]},
     posts : {type: [String], default:[]}
+
 })
 
 

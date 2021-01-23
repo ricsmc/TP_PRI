@@ -51,10 +51,20 @@ router.post('/register', function(req,res){
 router.get('/', (req,res,next) => res.render('index', {}))
 
 
-router.post('/posts/:id' , function(req,res,next){
+router.post('/posts/comment/:id' , function(req,res,next){
   var json = {comment : {comment: req.body.comment, username: req.cookies.access.username}}
   req.body= json
-  axios.post('http://localhost:7001/posts/comment/'+ req.params.id +'?token=' + req.cookies.access.token, req.body)
+  axios.put('http://localhost:7001/posts/comment/'+ req.params.id +'?token=' + req.cookies.access.token, req.body)
+    .then(dados => res.redirect('/posts/'+ req.params.id))
+    .catch(e => res.render('error', {error:e}))
+})
+
+router.post('/posts/rating/:id' , function(req,res,next){
+  console.log(req.body)
+  req.body._id = req.cookies.access.username
+  req.body.rating = parseInt(req.body.rating)
+  console.log(req.body)
+  axios.put('http://localhost:7001/posts/rating/'+ req.params.id +'?token=' + req.cookies.access.token, req.body)
     .then(dados => res.redirect('/posts/'+ req.params.id))
     .catch(e => res.render('error', {error:e}))
 })
