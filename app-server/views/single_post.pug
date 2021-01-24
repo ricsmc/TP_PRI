@@ -6,7 +6,7 @@ block content
         p #{post.descricao}
         for i in post.tags 
             a(href="/tags/" + i) # #{i}
-        -var rating = (post.rating.total / post.rating.num).toFixed(2)
+        -var rating = (post.rating.stars).toFixed(2)
         p Rating: #{rating}/5 (#{post.rating.num})
 
         form.w3-container(action='/posts/rating/' + post._id method='POST')

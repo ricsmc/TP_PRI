@@ -31,7 +31,7 @@ block content
         if(parseInt(i.rating.num,10) == 0)
           td= "sem rating"
         else 
-          td= (parseInt(i.rating.total,10) / parseInt(i.rating.num,10)).toFixed(2) + "/5"
+          td= (i.rating.stars).toFixed(2) + "/5"
         if(access.level=="admin")
           td 
             a(href="/posts/remove/" + i._id) Remover

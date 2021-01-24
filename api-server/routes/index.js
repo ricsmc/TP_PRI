@@ -22,8 +22,19 @@ router.get('/posts/:id', function(req, res, next) {
 
 // Listar todos os "posts" da página :page
 router.get('/posts/page/:page', function(req,res,next) {
-  PostControl.lookUp10()
+  PostControl.lookUp10date()
     .then(data =>{
+      PostControl.countSize()
+        .then(da => res.status(200).jsonp({posts : get10elements(req.params.page,data), size: da}))
+        .catch(err => res.status(500).jsonp({error:err}))
+    })
+    .catch(err => res.status(500).jsonp(err))
+})
+
+router.get('/posts/page/rate/:page', function(req,res,next) {
+  PostControl.lookUp10rate()
+    .then(data =>{
+      
       PostControl.countSize()
         .then(da => res.status(200).jsonp({posts : get10elements(req.params.page,data), size: da}))
         .catch(err => res.status(500).jsonp({error:err}))
