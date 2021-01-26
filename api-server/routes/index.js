@@ -31,12 +31,25 @@ router.get('/posts/page/:page', function(req,res,next) {
     .catch(err => res.status(500).jsonp(err))
 })
 
+
+
 router.get('/posts/page/rate/:page', function(req,res,next) {
   PostControl.lookUp10rate()
     .then(data =>{
       
       PostControl.countSize()
         .then(da => res.status(200).jsonp({posts : get10elements(req.params.page,data), size: da}))
+        .catch(err => res.status(500).jsonp({error:err}))
+    })
+    .catch(err => res.status(500).jsonp(err))
+})
+
+router.get('/posts/user/:id', function(req,res,next) {
+  if(req.query.page==null) res.status(404)
+  PostControl.lookUp10user(req.params.id)
+    .then(data =>{
+      PostControl.countSize()
+        .then(da => res.status(200).jsonp({posts : get10elements(req.query.page,data), size: da}))
         .catch(err => res.status(500).jsonp({error:err}))
     })
     .catch(err => res.status(500).jsonp(err))

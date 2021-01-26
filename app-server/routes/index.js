@@ -57,7 +57,6 @@ router.get('/posts', function(req, res, next) {
   var t = req.cookies.access.token;
   axios.get('http://localhost:7001/posts/page/1?token=' + t)
     .then(dados => {
-      console.log(dados.data)
       var paginas = (dados.data.size / 10)+1
       res.render('tabela_posts', {posts:dados.data.posts, pages:paginas, current_page:1,access:req.cookies.access})
     })
@@ -67,10 +66,11 @@ router.get('/posts', function(req, res, next) {
 
 // Busca do post :id
 router.get('/posts/:id', function(req, res, next) {
+  console.log(req.cookies.access)
  if (!req.cookies.access.token)  res.redirect('/login')
  var t = req.cookies.access.token;
  axios.get('http://localhost:7001/posts/'+ req.params.id + '?token=' + t)
-   .then(dados => res.render('single_post', {post:dados.data,access:req.cookies.access}))
+   .then(dados => res.render('single_post', {post:dados.data, access:req.cookies.access}))
    .catch(e => res.render('error', {error:e,access:req.cookies.access}))
 });
 
@@ -84,7 +84,7 @@ router.get('/posts/page/:page', function(req, res, next) {
       var paginas = (dados.data.size / 10)+1
       res.render('tabela_posts', {posts:dados.data.posts , pages:paginas, current_page:req.params.page,access:req.cookies.access})
 
-  })
+    })
     .catch(e => res.render('error', {error:e,access:req.cookies.access}))
 });
 
@@ -93,6 +93,23 @@ router.get('/posts/page/:page', function(req, res, next) {
 // USERS   ---------------------------------------
 
 
+router.get('/user/:id', function(req, res, next) {
+  if (!req.cookies.access.token)  res.redirect('/login')
+  var page;
+  if (req.query.page==null) {page = 1}
+  else {page = req.query.page}
+  axios.get('http://localhost:7002/users/' + req.params.id)
+    .then(da => {
+      axios.get('http://localhost:7001/posts/user/'+ req.params.id + '?page='+ page +'&token=' + req.cookies.access.token)
+        .then(dados => {
+          var paginas = (dados.data.size / 10)+1
+          res.render('user_page', {user:da.data,posts:dados.data.posts , pages:paginas, current_page:req.params.page,access:req.cookies.access})
+        
+      })
+      .catch(e => res.render('error', {error:e,access:req.cookies.access}))
+    })
+    .catch(e => res.render('error', {error:e,access:req.cookies.access}))
+});
 
 // LOGIN   ---------------------------------------
 

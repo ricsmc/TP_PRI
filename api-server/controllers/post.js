@@ -20,7 +20,10 @@ module.exports.lookUp10date = () => {
         rating:{
             total:{$sum:{$sum:"$estrelas.rating"}},
             num:{$size:"$estrelas"},
-            stars:{ $divide: [{$sum:{$sum:"$estrelas.rating"}},{$size:"$estrelas"}]}
+            stars:{ 
+                $cond:{if: {$eq: [{$size:"$estrelas"}, 0]} , then: 0, 
+                else:{$divide: [{$sum:{$sum:"$estrelas.rating"}},{$size:"$estrelas"}]}}
+            }
     }
     }}]).sort({upload_date : -1})
 }
@@ -40,7 +43,10 @@ module.exports.lookUp10rate = () => {
             rating:{
                 total:{$sum:{$sum:"$estrelas.rating"}},
                 num:{$size:"$estrelas"}, 
-                stars:{ $divide: [{$sum:{$sum:"$estrelas.rating"}},{$size:"$estrelas"}]}
+                stars:{ 
+                    $cond:{if: {$eq: [{$size:"$estrelas"}, 0]} , then: 0, 
+                    else:{$divide: [{$sum:{$sum:"$estrelas.rating"}},{$size:"$estrelas"}]}}
+                }
             }
         },
         },
@@ -48,6 +54,26 @@ module.exports.lookUp10rate = () => {
     ])
 }
 
+
+module.exports.lookUp10user = u => {
+    return Post.aggregate([
+        {$match: {id_user:u}},
+        {$project:{
+        _id:"$_id",
+        file:"$file",
+        id_user:"$id_user",
+        titulo:"$titulo",
+        upload_date:"$upload_date",
+        rating:{
+            total:{$sum:{$sum:"$estrelas.rating"}},
+            num:{$size:"$estrelas"},
+            stars:{ 
+                $cond:{if: {$eq: [{$size:"$estrelas"}, 0]} , then: 0, 
+                else:{$divide: [{$sum:{$sum:"$estrelas.rating"}},{$size:"$estrelas"}]}}
+            }
+    }
+    }}]).sort({upload_date : -1})
+}
 // Inserir o post u
 module.exports.insert = u => {
     console.log(JSON.stringify(u))
@@ -76,8 +102,25 @@ module.exports.countSize = () => {
 }
 
 module.exports.lookUp = p => {
-    return Post.aggregate([{"$match":{"_id":new mongoose.Types.ObjectId(p)}},{$project:{
-        tags:"$tags",_id:"$_id",file:"$file",comment:"$comment",id_user:"$id_user",titulo:"$titulo",descricao:"$descricao",upload_date:"$upload_date",rating:{total:{$sum:{$sum:"$estrelas.rating"}},num:{$size:"$estrelas"}}
+    return Post.aggregate([
+        {"$match":{"_id":new mongoose.Types.ObjectId(p)}},
+        {$project:{
+            tags:"$tags",
+            _id:"$_id",
+            file:"$file",
+            comment:"$comment",
+            id_user:"$id_user",
+            titulo:"$titulo",
+            descricao:"$descricao",
+            upload_date:"$upload_date",
+            rating:{
+                total:{$sum:{$sum:"$estrelas.rating"}},
+                num:{$size:"$estrelas"},
+                stars:{ 
+                    $cond:{if: {$eq: [{$size:"$estrelas"}, 0]} , then: 0, 
+                    else:{$divide: [{$sum:{$sum:"$estrelas.rating"}},{$size:"$estrelas"}]}}
+                }
+            }
     }}])
 }
 
