@@ -16,7 +16,7 @@ var postSchema = new mongoose.Schema({
     titulo: String,
     descricao: String,
     file : String,
-    restricitons : String,
+    restrictions : String,
     upload_date : {type:Date, default: Date.now},
     id_user : String,
     tags : {type: [String], default:[]},

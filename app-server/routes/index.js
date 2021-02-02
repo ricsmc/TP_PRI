@@ -22,7 +22,6 @@ router.post('/posts' , function(req,res,next){
 
 // Remover o post :id
 router.get('/posts/remove/:id' , function(req,res,next){
-  console.log('oi')
   axios.delete('http://localhost:7001/posts/'+ req.params.id +'?token=' + req.cookies.access.token)
     .then(dados => res.redirect('/posts'))
     .catch(e => res.render('error', {error:e,access:req.cookies.access}))
@@ -55,7 +54,7 @@ router.post('/posts/rating/:id' , function(req,res,next){
 router.get('/posts', function(req, res, next) {
   if (!req.cookies.access.token)  res.redirect('/login')
   var t = req.cookies.access.token;
-  axios.get('http://localhost:7001/posts/page/1?token=' + t)
+  axios.get('http://localhost:7001/posts?page=1&user='+ req.cookies.access.username + '&level='+ req.cookies.access.level +'&token=' + t)
     .then(dados => {
       var paginas = (dados.data.size / 10)+1
       res.render('tabela_posts', {posts:dados.data.posts, pages:paginas, current_page:1,access:req.cookies.access})
@@ -79,7 +78,7 @@ router.get('/posts/:id', function(req, res, next) {
 router.get('/posts/page/:page', function(req, res, next) {
   if (!req.cookies.access.token) res.redirect('/login')
   var t = req.cookies.access.token;
-  axios.get('http://localhost:7001/posts/page/'+ req.params.page + '?token=' + t)
+  axios.get('http://localhost:7001/posts?page='+ req.params.page + '?user='+ req.cookies.access.username + '&level='+ req.cookies.access.level+ '&token=' + t)
     .then(dados => {
       var paginas = (dados.data.size / 10)+1
       res.render('tabela_posts', {posts:dados.data.posts , pages:paginas, current_page:req.params.page,access:req.cookies.access})

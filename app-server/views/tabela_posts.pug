@@ -27,7 +27,8 @@ block content
           td= 'há ' + parseInt(data / (1000*60*60*24*31),10) + ' meses' 
         else 
           td= 'há ' + parseInt(data / (1000*60*60*24*365),10) + ' anos' 
-        td= i.id_user
+        td
+          a(href="/user/" + i.id_user)= i.id_user
         if(parseInt(i.rating.num,10) == 0)
           td= "sem rating"
         else 

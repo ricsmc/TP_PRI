@@ -6,7 +6,7 @@ module.exports.list = ()=> {
     return Post.find().exec()
 }
 
-module.exports.lookUp10date = () => {
+module.exports.lookUp10dateAdmin = () => {
     return Post.aggregate([
         {$project:{
         tags:"$tags",
@@ -28,10 +28,124 @@ module.exports.lookUp10date = () => {
     }}]).sort({upload_date : -1})
 }
 
+module.exports.lookUp10date = u => {
+    return Post.aggregate([
+        {$match:{
+            $or:[
+                {id_user:u},
+                {restrictions:"public"}
+            ]
+        }},
+        {$project:{
+        tags:"$tags",
+        _id:"$_id",
+        file:"$file",
+        comment:"$comment",
+        id_user:"$id_user",
+        titulo:"$titulo",
+        descricao:"$descricao",
+        upload_date:"$upload_date",
+        rating:{
+            total:{$sum:{$sum:"$estrelas.rating"}},
+            num:{$size:"$estrelas"},
+            stars:{ 
+                $cond:{if: {$eq: [{$size:"$estrelas"}, 0]} , then: 0, 
+                else:{$divide: [{$sum:{$sum:"$estrelas.rating"}},{$size:"$estrelas"}]}}
+            }
+    }
+    }}]).sort({upload_date : -1})
+}
 
-module.exports.lookUp10rate = () => {
-    return Post.aggregate([{
-        $project:{
+
+module.exports.lookUp10tags = (t,u) => {
+    return Post.aggregate([
+        {$match:{
+            $and:[
+                {$or:[
+                    {id_user:u},
+                    {restrictions:"public"}
+                ]},
+                {tags:{$elemMatch:{$in:t}}}
+            ]
+        }},
+        {$project:{
+        tags:"$tags",
+        _id:"$_id",
+        file:"$file",
+        comment:"$comment",
+        id_user:"$id_user",
+        titulo:"$titulo",
+        descricao:"$descricao",
+        upload_date:"$upload_date",
+        rating:{
+            total:{$sum:{$sum:"$estrelas.rating"}},
+            num:{$size:"$estrelas"},
+            stars:{ 
+                $cond:{if: {$eq: [{$size:"$estrelas"}, 0]} , then: 0, 
+                else:{$divide: [{$sum:{$sum:"$estrelas.rating"}},{$size:"$estrelas"}]}}
+            }
+    }
+    }}]).sort({upload_date : -1})
+}
+
+module.exports.lookUp10tagsAdmin = t => {
+    return Post.aggregate([
+        {$match:{tags:{$elemMatch:{$in:t}}}},
+        {$project:{
+        tags:"$tags",
+        _id:"$_id",
+        file:"$file",
+        comment:"$comment",
+        id_user:"$id_user",
+        titulo:"$titulo",
+        descricao:"$descricao",
+        upload_date:"$upload_date",
+        rating:{
+            total:{$sum:{$sum:"$estrelas.rating"}},
+            num:{$size:"$estrelas"},
+            stars:{ 
+                $cond:{if: {$eq: [{$size:"$estrelas"}, 0]} , then: 0, 
+                else:{$divide: [{$sum:{$sum:"$estrelas.rating"}},{$size:"$estrelas"}]}}
+            }
+    }
+    }}]).sort({upload_date : -1})
+}
+
+module.exports.lookUp10rateAdmin = () => {
+    return Post.aggregate([
+        {$project:{
+            tags:"$tags",
+            _id:"$_id",
+            file:"$file",
+            comment:"$comment",
+            id_user:"$id_user",
+            titulo:"$titulo",
+            descricao:"$descricao",
+            upload_date:"$upload_date",
+            rating:{
+                total:{$sum:{$sum:"$estrelas.rating"}},
+                num:{$size:"$estrelas"}, 
+                stars:{ 
+                    $cond:{if: {$eq: [{$size:"$estrelas"}, 0]} , then: 0, 
+                    else:{$divide: [{$sum:{$sum:"$estrelas.rating"}},{$size:"$estrelas"}]}}
+                }
+            }
+        },
+        },
+        {$sort:{ "rating.stars": -1}}
+    ])
+}
+
+
+module.exports.lookUp10rate = u => {
+    return Post.aggregate([
+        {$match:{
+            $or:[
+                {_id:u},
+                {restrictions:"public"}
+            ]
+        }},
+        {$project:{
             tags:"$tags",
             _id:"$_id",
             file:"$file",
@@ -56,6 +170,28 @@ module.exports.lookUp10rate = () => {
 
 
 module.exports.lookUp10user = u => {
+    return Post.aggregate([
+        {$match: {
+            $and:[{id_user:u}, {restrictions:"public"}]
+        }},
+        {$project:{
+        _id:"$_id",
+        file:"$file",
+        id_user:"$id_user",
+        titulo:"$titulo",
+        upload_date:"$upload_date",
+        rating:{
+            total:{$sum:{$sum:"$estrelas.rating"}},
+            num:{$size:"$estrelas"},
+            stars:{ 
+                $cond:{if: {$eq: [{$size:"$estrelas"}, 0]} , then: 0, 
+                else:{$divide: [{$sum:{$sum:"$estrelas.rating"}},{$size:"$estrelas"}]}}
+            }
+    }
+    }}]).sort({upload_date : -1})
+}
+
+module.exports.lookUp10userAdmin = u => {
     return Post.aggregate([
         {$match: {id_user:u}},
         {$project:{
@@ -95,10 +231,6 @@ module.exports.edit = (id,u) => {
 //Funções sobre comentários ---------------
 module.exports.insertComment = (c,p) => {
     return Post.findByIdAndUpdate(p,{$push : c},{new:true})
-}
-
-module.exports.countSize = () => {
-    return Post.countDocuments({})
 }
 
 module.exports.lookUp = p => {

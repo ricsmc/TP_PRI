@@ -3,13 +3,6 @@ var router = express.Router();
 
 var PostControl = require('../controllers/post')
 
-// Listar BD
-router.get('/posts', function(req, res, next) {
-  PostControl.list()
-    .then(data => res.status(200).jsonp(data))
-    .catch(err => res.status(500).jsonp(err))
-});
-
 
 // Procurar user :id
 router.get('/posts/:id', function(req, res, next) {
@@ -21,38 +14,80 @@ router.get('/posts/:id', function(req, res, next) {
 });
 
 // Listar todos os "posts" da página :page
-router.get('/posts/page/:page', function(req,res,next) {
-  PostControl.lookUp10date()
-    .then(data =>{
-      PostControl.countSize()
-        .then(da => res.status(200).jsonp({posts : get10elements(req.params.page,data), size: da}))
-        .catch(err => res.status(500).jsonp({error:err}))
-    })
-    .catch(err => res.status(500).jsonp(err))
+router.get('/posts', function(req,res,next) {
+  if(req.query.order == "date"){
+    if(req.query.level == "admin"){
+      PostControl.lookUp10dateAdmin()
+      .then(data =>{
+        res.status(200).jsonp({posts : get10elements(req.query.page,data), size: data.length})
+      })
+      .catch(err => res.status(500).jsonp(err))
+    }
+    else{
+      PostControl.lookUp10date(req.query.user)
+      .then(data =>{
+        res.status(200).jsonp({posts : get10elements(req.query.page,data), size: data.length})
+      })
+      .catch(err => res.status(500).jsonp(err))
+    }
+  }
+  else{
+    if(req.query.level=="admin"){
+      PostControl.lookUp10rateAdmin()
+        .then(data =>{
+          res.status(200).jsonp({posts : get10elements(req.query.page,data), size: data.length})
+        })
+        .catch(err => res.status(500).jsonp(err))
+    }
+    else{
+      PostControl.lookUp10rate(req.query.user)
+        .then(data =>{
+          res.status(200).jsonp({posts : get10elements(req.query.page,data), size: data.length})
+        })
+        .catch(err => res.status(500).jsonp(err))
+    }
+  }
+  
+  
 })
 
-
-
-router.get('/posts/page/rate/:page', function(req,res,next) {
-  PostControl.lookUp10rate()
-    .then(data =>{
-      
-      PostControl.countSize()
-        .then(da => res.status(200).jsonp({posts : get10elements(req.params.page,data), size: da}))
-        .catch(err => res.status(500).jsonp({error:err}))
-    })
-    .catch(err => res.status(500).jsonp(err))
+router.post('/posts/search', function(req,res,next){
+  if(req.query.page==null) res.status(404)
+  if(req.query.level=="admin"){
+    PostControl.lookUp10tagsAdmin(req.body.tags)
+      .then(data =>{
+        res.status(200).jsonp({posts : get10elements(req.query.page,data), size: data.length})
+      })
+      .catch(err => res.status(500).jsonp(err))
+  }
+  else{
+    PostControl.lookUp10tags(req.body.tags,req.query.user)
+      .then(data =>{
+        res.status(200).jsonp({posts : get10elements(req.query.page,data), size: data.length})
+      })
+      .catch(err => res.status(500).jsonp(err))
+  }
+  
 })
+
 
 router.get('/posts/user/:id', function(req,res,next) {
   if(req.query.page==null) res.status(404)
-  PostControl.lookUp10user(req.params.id)
+  if(req.query.level="admin" || req.query.user == req.params.id){
+    PostControl.lookUp10userAdmin(req.params.id)
     .then(data =>{
-      PostControl.countSize()
-        .then(da => res.status(200).jsonp({posts : get10elements(req.query.page,data), size: da}))
-        .catch(err => res.status(500).jsonp({error:err}))
+      res.status(200).jsonp({posts : get10elements(req.query.page,data), size: data.length})
     })
     .catch(err => res.status(500).jsonp(err))
+  }
+  else{
+    PostControl.lookUp10user(req.params.id)
+    .then(data =>{
+      res.status(200).jsonp({posts : get10elements(req.query.page,data), size: data.length})
+    })
+    .catch(err => res.status(500).jsonp(err))
+  }
+  
 })
 
 router.put('/posts/comment/:id', (req,res) => {
