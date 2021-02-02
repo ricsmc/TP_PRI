@@ -5,7 +5,8 @@ block content
         h2.w3-bottombar #{post.titulo}
         p #{post.descricao}
         for i in post.tags 
-            a(href="/tags/" + i) # #{i}
+            form(action='/posts/search' method='post')
+                button(type='submit' name='tags' value=i class='btn-link') # #{i}
         -var rating = (post.rating.stars).toFixed(2)
         p Rating: #{rating}/5 (#{post.rating.num})
 

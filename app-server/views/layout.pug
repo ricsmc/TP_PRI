@@ -41,9 +41,10 @@ html
           a.w3-bar-item.w3-button(href="#") 
             i.fa.fa-sign-out
             span  Sign Out
-      input.w3-bar-item.w3-input(type='text' placeholder='Search..')
-      a.w3-bar-item.w3-button(href="#")
-        i.fa.fa-search
+      form(action='/posts/search' method='POST')
+        input.w3-bar-item.w3-input(type='text' name='tags' placeholder='Search..' style='color:#fffff')
+        button.w3-bar-item.w3-button(type='submit')
+          i.fa.fa-search
       if(access.level=="admin" || access.level=="producer")
         a.w3-bar-item.w3-button(href="/posts/new")
           i.fa.fa-plus

@@ -19,6 +19,17 @@ router.post('/posts' , function(req,res,next){
     .catch(e => res.render('error', {error:e,access:req.cookies.access}))
 })
 
+router.post('/posts/search' , function(req,res,next){
+  req.body.tags = req.body.tags.split(" ")
+  console.log(req.body)
+  req.body.id_user = req.cookies.access.username
+  axios.post('http://localhost:7001/posts/search?page=1&user='+ req.cookies.access.username + '&level='+ req.cookies.access.level +'&token=' + req.cookies.access.token, req.body)
+    .then(dados => {
+      var paginas = (dados.data.size / 10)+1
+      res.render('tabela_posts', {posts:dados.data.posts, pages:paginas, current_page:1,access:req.cookies.access})
+    })
+    .catch(e => res.render('error', {error:e,access:req.cookies.access}))
+})
 
 // Remover o post :id
 router.get('/posts/remove/:id' , function(req,res,next){
