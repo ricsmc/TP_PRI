@@ -12,7 +12,7 @@ block content
         th Editar
     for i in posts
       tr.clickable-row.w3-hover-dark-gray(style="cursor:pointer" data-href="/posts/" + i._id)
-        td= i.file
+        td= i.titulo
         - console.log(i.upload_date)
         - var data = Math.abs(Date.parse(i.upload_date) - new Date())
         if(data < 1000*60)

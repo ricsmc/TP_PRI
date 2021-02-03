@@ -105,6 +105,12 @@ router.get('/posts/page/:page', function(req, res, next) {
 
 router.get('/user/:id', function(req, res, next) {
   if (!req.cookies.access.token)  res.redirect('/login')
+  if(req.query.level!=null){
+    var json = { level: req.query.level}
+    axios.put('http://localhost:7002/users/'+ req.params.id , json)
+      .then(res.redirect('/users/'+req.params.id))
+      .catch(e => res.render('error', {error:e,access:req.cookies.access}))
+  }
   var page;
   if (req.query.page==null) {page = 1}
   else {page = req.query.page}
@@ -113,8 +119,8 @@ router.get('/user/:id', function(req, res, next) {
       axios.get('http://localhost:7001/posts/user/'+ req.params.id + '?page='+ page +'&token=' + req.cookies.access.token)
         .then(dados => {
           var paginas = (dados.data.size / 10)+1
-          res.render('user_page', {user:da.data,posts:dados.data.posts , pages:paginas, current_page:req.params.page,access:req.cookies.access})
-        
+          console.log(req.cookies)
+          res.render('user_page', {user:da.data,posts:dados.data.posts,pages:paginas,current_page:page,access:req.cookies.access})
       })
       .catch(e => res.render('error', {error:e,access:req.cookies.access}))
     })
