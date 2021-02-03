@@ -1,6 +1,20 @@
 var express = require('express');
 var router = express.Router();
 var axios = require('axios');
+var path = require('path')
+var fs = require('fs')
+var jsonfile = require('jsonfile')
+
+var multer = require('multer')
+var storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null,'uploads/')
+  },
+  filename: function (req, file, cb) {
+    cb(null, Date.now() + path.extname(file.originalname)) //Appending .jpg
+  }
+})
+var upload = multer({storage:storage})
 
 // POSTS ---------------------------------------
 
@@ -12,10 +26,39 @@ router.get('/posts/new' , function(req,res,next){
 
 
 // Post na API com o novo post
-router.post('/posts' , function(req,res,next){
+router.post('/posts' , upload.single('myFile') ,function(req,res,next){
+  console.log('Post ' + JSON.stringify(req.file))
+  
   req.body.id_user = req.cookies.access.username
   axios.post('http://localhost:7001/posts?token=' + req.cookies.access.token, req.body)
-    .then(dados => res.redirect('/posts/'+ dados.data._id))
+    .then(dados => {
+      let quartinePath = __dirname + '/../' + req.file.path
+      if(!fs.existsSync(__dirname + '/../public/fileStore/' + dados.data._id)){
+        fs.mkdirSync(__dirname + '/../public/fileStore/' + dados.data._id)
+      }
+      let newPath = __dirname + '/../public/fileStore/' + dados.data._id + '/' + req.file.originalname
+
+  fs.rename(quartinePath, newPath, function(err){
+    if(err){
+      res.render('error', {error:err,access:req.cookies.access})
+    }
+    else{
+      var d = new Date().toISOString().substr(0,16)
+      var files = jsonfile.readFileSync('./dbFiles.json')
+
+      files.push({
+        date:d,
+        name:req.file.originalname,
+        mimetype: req.file.mimetype,
+        size: req.file.size
+      })
+      jsonfile.writeFileSync('./dbFiles.json', files)
+    }
+  })
+
+      res.redirect('/posts/'+ dados.data._id)
+      
+    })
     .catch(e => res.render('error', {error:e,access:req.cookies.access}))
 })
 
@@ -76,7 +119,6 @@ router.get('/posts', function(req, res, next) {
 
 // Busca do post :id
 router.get('/posts/:id', function(req, res, next) {
-  console.log(req.cookies.access)
  if (!req.cookies.access.token)  res.redirect('/login')
  var t = req.cookies.access.token;
  axios.get('http://localhost:7001/posts/'+ req.params.id + '?token=' + t)

@@ -2,7 +2,7 @@ extends layout
 
 block content
     h1 Criar um novo post
-    form.w3-container(action='/posts' method='POST')
+    form.w3-container(action='/posts' method='POST' enctype="multipart/form-data")
         label Tipo:
         input.w3-input(type='text' name="type")
 
@@ -20,6 +20,8 @@ block content
         label Public
         input.w3-check(type='checkbox' value="private" name="restrictions")
         label Private
+
+        input#myFile(type='file' name='myFile')
         
 
         input.w3-btn-.w3-round-large.w3-white.w3-border(type="submit" value="Submeter")
