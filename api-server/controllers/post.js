@@ -214,7 +214,6 @@ module.exports.lookUp10userAdmin = u => {
 }
 // Inserir o post u
 module.exports.insert = u => {
-    console.log(JSON.stringify(u))
     var newPost = new Post(u)
     return newPost.save()
 }

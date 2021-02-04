@@ -2,8 +2,33 @@ var express = require('express');
 var router = express.Router();
 
 var PostControl = require('../controllers/post')
+var NotControl = require('../controllers/noticias')
 
+function insertNoticia(res, not){
+  NotControl.count()
+    .then(data => {
+      console.log(data)
+      if(data >= 10){
+        console.log('Oi')
+        NotControl.oldest()
+        .then(old => {
+          console.log(old)
 
+          NotControl.remove(old[0]._id)
+            .then(console.log('Deleted'))
+            .catch(err => res.status(500).jsonp({error:err}))
+          NotControl.insert(not)
+          .catch(err => res.status(500).jsonp({error:err}))
+        })
+      }
+      else{
+        NotControl.insert(not)
+          .catch(err => res.status(500).jsonp({error:err}))
+      }
+    })
+    .catch(err => res.status(500).jsonp({error:err}))
+
+}
 // Procurar user :id
 router.get('/posts/:id', function(req, res, next) {
   PostControl.lookUp(req.params.id)
@@ -100,7 +125,17 @@ router.put('/posts/comment/:id', (req,res) => {
 // Post user
 router.post('/posts', (req,res) => {
   PostControl.insert(req.body)
-    .then(data => res.status(201).jsonp(data))
+    .then(data => {
+      var json = {
+        type:data.type,
+        titulo:data.titulo,
+        id_user:data.id_user,
+        upload_date:data.upload_date
+      }
+      insertNoticia(res,json)
+      res.status(201).jsonp(data)
+    
+    })
     .catch(err => res.status(500).jsonp({error:err}))
 })
 
