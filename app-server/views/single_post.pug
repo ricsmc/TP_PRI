@@ -13,6 +13,8 @@ block content
         form.w3-container(action='/posts/rating/' + post._id method='POST')
             input#input-id.rating(name='rating', type='number', min=1, max=5, step=1, data-size='lg', data-rtl='true')
             input.w3-btn-gray(type="submit" value="Submeter")
+
+        a(href="/download/" + post._id) Download
         h3 Comentários
         .w3-container.w3-border
             form.w3-container.w3-margin(action='/posts/comment/' + post._id method='POST')

@@ -6,6 +6,7 @@
     "start": "node ./bin/www"
   },
   "dependencies": {
+    "archiver": "^5.2.0",
     "axios": "^0.21.1",
     "bootstrap": "^4.6.0",
     "bootstrap-star-rating": "^4.0.6",
@@ -20,7 +21,8 @@
     "node-localstorage": "^2.1.6",
     "popper.js": "^1.16.1",
     "pug": "^3.0.0",
-    "rateyo": "^3.0.0-alpha.2"
+    "rateyo": "^3.0.0-alpha.2",
+    "rimraf": "^3.0.2"
   },
   "devDependencies": {}
 }

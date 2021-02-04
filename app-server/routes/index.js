@@ -4,6 +4,8 @@ var axios = require('axios');
 var path = require('path')
 var fs = require('fs')
 var jsonfile = require('jsonfile')
+var child_process = require("child_process");
+var archiver = require('archiver');
 
 var multer = require('multer')
 var storage = multer.diskStorage({
@@ -15,6 +17,7 @@ var storage = multer.diskStorage({
   }
 })
 var upload = multer({storage:storage})
+
 
 // POSTS ---------------------------------------
 
@@ -33,34 +36,26 @@ router.post('/posts' , upload.single('myFile') ,function(req,res,next){
   axios.post('http://localhost:7001/posts?token=' + req.cookies.access.token, req.body)
     .then(dados => {
       let quartinePath = __dirname + '/../' + req.file.path
-      if(!fs.existsSync(__dirname + '/../public/fileStore/' + dados.data._id)){
-        fs.mkdirSync(__dirname + '/../public/fileStore/' + dados.data._id)
-      }
-      let newPath = __dirname + '/../public/fileStore/' + dados.data._id + '/' + req.file.originalname
 
-  fs.rename(quartinePath, newPath, function(err){
-    if(err){
-      res.render('error', {error:err,access:req.cookies.access})
-    }
-    else{
-      var d = new Date().toISOString().substr(0,16)
-      var files = jsonfile.readFileSync('./dbFiles.json')
-
-      files.push({
-        date:d,
-        name:req.file.originalname,
-        mimetype: req.file.mimetype,
-        size: req.file.size
-      })
-      jsonfile.writeFileSync('./dbFiles.json', files)
-    }
-  })
+      const output = fs.createWriteStream(__dirname + '/../public/fileStore/' + dados.data._id + '.zip');
+      const archive = archiver('zip', {
+        zlib: { level: 9 } // Sets the compression level.
+      });
+      archive.pipe(output);
+      const file1 =quartinePath;
+      archive.append(fs.createReadStream(file1), { name: req.file.originalname });  
+      archive.finalize();
 
       res.redirect('/posts/'+ dados.data._id)
       
     })
     .catch(e => res.render('error', {error:e,access:req.cookies.access}))
 })
+
+router.get('/download/:filename', function(req, res){
+  res.download(__dirname + '/../public/fileStore/' + req.params.filename + '.zip')
+})
+
 
 router.post('/posts/search' , function(req,res,next){
   req.body.tags = req.body.tags.split(" ")
