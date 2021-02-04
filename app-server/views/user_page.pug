@@ -7,7 +7,7 @@ block content
           p #{user.filiation}
           p #{user.desc} 
           p #{user.level}
-          if(access.level=="admin")
+          if(access.level=="admin" && access.username!=user.username)
             p Mudar permissões:
             if(user.level!="admin")
               a(href='/user/'+ user.username + '?level=admin') Admin

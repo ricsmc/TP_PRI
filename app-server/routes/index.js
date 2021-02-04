@@ -29,22 +29,37 @@ router.get('/posts/new' , function(req,res,next){
 
 
 // Post na API com o novo post
-router.post('/posts' , upload.single('myFile') ,function(req,res,next){
+router.post('/posts' , upload.array('myFiles') ,function(req,res,next){
   console.log('Post ' + JSON.stringify(req.file))
   
   req.body.id_user = req.cookies.access.username
   axios.post('http://localhost:7001/posts?token=' + req.cookies.access.token, req.body)
     .then(dados => {
-      let quartinePath = __dirname + '/../' + req.file.path
-
       const output = fs.createWriteStream(__dirname + '/../public/fileStore/' + dados.data._id + '.zip');
-      const archive = archiver('zip', {
-        zlib: { level: 9 } // Sets the compression level.
-      });
-      archive.pipe(output);
-      const file1 =quartinePath;
-      archive.append(fs.createReadStream(file1), { name: req.file.originalname });  
+        const archive = archiver('zip', {
+          zlib: { level: 9 } // Sets the compression level.
+        });
+        archive.pipe(output);
+        var file1;
+        archive.append(null, { name: 'data/' });
+      req.files.forEach(function(i){
+        let quartinePath = __dirname + '/../' + i.path
+        file1 =quartinePath;
+        archive.append(fs.createReadStream(file1), { name: 'data/'+i.originalname });  
+      })
+        
+        
       archive.finalize();
+      fs.readdir(__dirname+'/../uploads', (err, files) => {
+        if (err) throw err;
+      
+        for (const file of files) {
+          fs.unlink(path.join(__dirname+'/../uploads', file), err => {
+            if (err) throw err;
+          });
+        }
+      });
+     
 
       res.redirect('/posts/'+ dados.data._id)
       
@@ -71,6 +86,13 @@ router.post('/posts/search' , function(req,res,next){
 
 // Remover o post :id
 router.get('/posts/remove/:id' , function(req,res,next){
+  fs.unlink(__dirname + '/../public/fileStore/' + req.params.id + '.zip', (err) => {
+    if (err) {
+      console.error(err)
+      return
+    }
+  })
+  
   axios.delete('http://localhost:7001/posts/'+ req.params.id +'?token=' + req.cookies.access.token)
     .then(dados => res.redirect('/posts'))
     .catch(e => res.render('error', {error:e,access:req.cookies.access}))
