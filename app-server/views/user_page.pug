@@ -1,6 +1,16 @@
 extends layout
 
 block content
+    #id01.w3-modal
+      .w3-modal-content
+        .w3-container
+          span.w3-button.w3-display-topright(onclick="document.getElementById('id01').style.display='none'") &times;
+          p 
+          form.w3-container(action='/user/edit/' + user.username method='POST' enctype="multipart/form-data")
+            label Descrição:
+            input.w3-input(type='text' name="desc")
+            input#myFile(type='file' name='myFile')
+            input.w3-btn.w3-round-large.w3-white.w3-border(type="submit" value="Submeter")
     .row
       .col-md-11.mx-auto
         // Profile widget
@@ -8,8 +18,11 @@ block content
           .px-4.pt-0.pb-4.cover
             .media.align-items-end.profile-head
               .profile.mr-3
-                img.rounded.mb-2.img-thumbnail(src='https://t4.ftcdn.net/jpg/00/64/67/63/360_F_64676383_LdbmhiNM6Ypzb3FM4PPuFP9rHe7ri8Ju.jpg' alt='...' width='130')
-                button.w3-button.w3-white.w3-border.w3-border-blue-grey.w3-round-large.btn-block(href='#') Edit 
+                if user.pic == "ok"
+                  img.rounded.mb-2.img-thumbnail(src='/profilePic/' + user.username + '.jpg')
+                else
+                  img.rounded.mb-2.img-thumbnail(src='https://t4.ftcdn.net/jpg/00/64/67/63/360_F_64676383_LdbmhiNM6Ypzb3FM4PPuFP9rHe7ri8Ju.jpg' alt='...' width='130')
+                button.w3-button.w3-white.w3-border.w3-border-blue-grey.w3-round-large.btn-block(onclick="document.getElementById('id01').style.display='block'") Edit 
               .media-body.mb-5
                 h4.mt-0.mb-0 #{user.username}
                 p.small.mb-4

@@ -187,6 +187,26 @@ router.get('/user/:id', function(req, res, next) {
     .catch(e => res.render('error', {error:e,access:req.cookies.access}))
 });
 
+
+router.post('/user/edit/:id' , upload.single('myFile'), function(req,res){
+  if(req.file!=null){
+    let quartinePath = __dirname + '/../' + req.file.path
+    var extension = req.file.originalname.split('.')[1]
+    let newPath = __dirname + '/../public/profilePic/' + req.params.id + '.' + extension
+  
+    fs.rename(quartinePath, newPath,function(err){
+      if(err){
+        res.render('error', {error:e,access:req.cookies.access})
+      }
+    })
+    req.body.pic = "ok"
+  }
+  
+  axios.put('http://localhost:7002/users/'+ req.params.id , req.body)
+      .then(res.redirect('/user/'+req.params.id))
+      .catch(e => res.render('error', {error:e}))
+})
+
 // LOGIN   ---------------------------------------
 
 
