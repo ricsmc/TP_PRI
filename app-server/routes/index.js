@@ -123,7 +123,7 @@ router.post('/posts/rating/:id' , function(req,res,next){
 
 // Busca da primeira página de posts
 router.get('/posts', function(req, res, next) {
-  if (!req.cookies.access.token)  res.redirect('/login')
+  if (req.cookies.access == null)  res.redirect('/login')
   var t = req.cookies.access.token;
   axios.get('http://localhost:7001/posts?page=1&user='+ req.cookies.access.username + '&level='+ req.cookies.access.level +'&token=' + t)
     .then(dados => {
@@ -136,7 +136,7 @@ router.get('/posts', function(req, res, next) {
 
 // Busca do post :id
 router.get('/posts/:id', function(req, res, next) {
- if (!req.cookies.access.token)  res.redirect('/login')
+  if (req.cookies.access == null)  res.redirect('/login')
  var t = req.cookies.access.token;
  axios.get('http://localhost:7001/posts/'+ req.params.id + '?token=' + t)
    .then(dados => res.render('single_post', {post:dados.data, access:req.cookies.access}))
@@ -146,7 +146,7 @@ router.get('/posts/:id', function(req, res, next) {
 
 // Busca da página de posts :page
 router.get('/posts/page/:page', function(req, res, next) {
-  if (!req.cookies.access.token) res.redirect('/login')
+  if (req.cookies.access == null)  res.redirect('/login')
   var t = req.cookies.access.token;
   axios.get('http://localhost:7001/posts?page='+ req.params.page + '?user='+ req.cookies.access.username + '&level='+ req.cookies.access.level+ '&token=' + t)
     .then(dados => {
@@ -163,11 +163,12 @@ router.get('/posts/page/:page', function(req, res, next) {
 
 
 router.get('/user/:id', function(req, res, next) {
-  if (!req.cookies.access.token)  res.redirect('/login')
+  if (req.cookies.access == null)  res.redirect('/login')
   if(req.query.level!=null){
+    console.log('Ois')
     var json = { level: req.query.level}
     axios.put('http://localhost:7002/users/'+ req.params.id , json)
-      .then(res.redirect('/users/'+req.params.id))
+      .then(res.redirect('/user/'+req.params.id))
       .catch(e => res.render('error', {error:e,access:req.cookies.access}))
   }
   var page;
@@ -192,6 +193,11 @@ router.get('/user/:id', function(req, res, next) {
 // Página de login
 router.get('/login', function(req,res){
   res.render('login-form');
+})
+
+router.get('/logout', function(req,res){
+  res.clearCookie('access');
+  res.redirect('/login')
 })
 
 

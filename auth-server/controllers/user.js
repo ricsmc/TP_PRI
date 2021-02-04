@@ -29,7 +29,7 @@ module.exports.remove = id => {
 
 // Editar o user id para u
 module.exports.edit = (id,u) => {
-    return User.findByIdAndUpdate(id, u, {new: true})
+    return User.findOneAndUpdate({username:id}, u, {new: true})
 }
 
 

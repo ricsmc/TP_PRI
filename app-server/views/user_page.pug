@@ -1,25 +1,42 @@
 extends layout
 
 block content
-  .w3-row
-      .w3-col.l3.w3-light-grey.w3-center
-          h1 #{user.username}
-          p #{user.filiation}
-          p #{user.desc} 
-          p #{user.level}
-          if(access.level=="admin" && access.username!=user.username)
-            p Mudar permissões:
-            if(user.level!="admin")
-              a(href='/user/'+ user.username + '?level=admin') Admin
-            
-            if(user.level!="producer")
-              a(href='/user/'+ user.username + '?level=producer') Producer
-            
-            if(user.level!="consumer")
-              a(href='/user/'+ user.username + '?level=consumer') Consumer
-            
-        
-      .w3-col.l9.w3-center
+    .row
+      .col-md-11.mx-auto
+        // Profile widget
+        .bg-white.shadow.rounded.overflow-hidden
+          .px-4.pt-0.pb-4.cover
+            .media.align-items-end.profile-head
+              .profile.mr-3
+                img.rounded.mb-2.img-thumbnail(src='https://t4.ftcdn.net/jpg/00/64/67/63/360_F_64676383_LdbmhiNM6Ypzb3FM4PPuFP9rHe7ri8Ju.jpg' alt='...' width='130')
+                button.w3-button.w3-white.w3-border.w3-border-blue-grey.w3-round-large.btn-block(href='#') Edit 
+              .media-body.mb-5
+                h4.mt-0.mb-0 #{user.username}
+                p.small.mb-4
+                  i.fas.fa-map-marker-alt.mr-2
+                  | #{user.filiation}
+          .bg-light.p-4.d-flex.text-center
+              ul.list-inline.mb-0
+                  li.list-inline-item
+                    
+
+          .py-4
+           if(access.level=="admin" && access.username!=user.username)
+            h5.mr-5 Mudar permissões:
+            .px-4.pt-0.pb-4
+             if(user.level!="admin")
+               a.w3-button.w3-white.w3-border.w3-border-blue-grey.w3-round-large(href='/user/'+ user.username + '?level=admin') Admin
+             if(user.level!="producer")
+               a.w3-button.w3-white.w3-border.w3-border-blue-grey.w3-round-large(href='/user/'+ user.username + '?level=producer') Producer
+             if(user.level!="consumer")
+               a.w3-button.w3-white.w3-border.w3-border-blue-grey.w3-round-large(href='/user/'+ user.username + '?level=consumer') Consumer
+
+          .py-3
+            h5.mb-0 About
+            .p-4.rounded.shadow-sm.bg-light
+              p.font-italic.mb-0 #{user.desc}
+          .py-4
+             .w3-col.l9.w3-center
           table.w3-table.w3-striped.w3-centered
               tr 
                 th Nome
