@@ -217,8 +217,11 @@ module.exports.lookUp10userAdmin = u => {
 
 module.exports.lookUp10type = u => {
     return Post.aggregate([
-        {$match: {
-            $and:[{type:u}, {restrictions:"public"}]
+        {$match:{
+            $or:[
+                {_id:u},
+                {restrictions:"public"}
+            ]
         }},
         {$project:{
         _id:"$_id",
@@ -257,7 +260,33 @@ module.exports.lookUp10typeAdmin = u => {
     }}]).sort({upload_date : -1})
 }
 
-module.exports.getCat = () => {
+module.exports.getCat = u => {
+    return Post.aggregate([
+        {$match:{
+            $or:[
+                {_id:u},
+                {restrictions:"public"}
+            ]
+        }},
+        {
+            $group: {
+                _id: null,
+                type: { $addToSet: "$type" }
+            }
+        },
+        {
+            $unwind: "$type"
+        },
+        {
+            $project: {
+                _id: 0,
+                type:1
+            }
+        }
+    ]);
+}
+
+module.exports.getCatAdmin = () => {
     return Post.aggregate([
         {
             $group: {

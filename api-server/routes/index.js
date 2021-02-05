@@ -195,9 +195,17 @@ router.put('/posts/rating/:id', function(req, res, next) {
 });
 
 router.get('/posts/type', function(req,res){
-  PostControl.getCat()
+  if(req.query.level=="admin"){
+    PostControl.getCatAdmin()
     .then(data => res.status(200).jsonp(data))
     .catch(err => res.status(500).jsonp(err))
+  }
+  else{
+    PostControl.getCat(req.query.user)
+    .then(data => res.status(200).jsonp(data))
+    .catch(err => res.status(500).jsonp(err))
+  }
+
 })
 
 

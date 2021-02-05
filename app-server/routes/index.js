@@ -161,7 +161,7 @@ router.get('/posts', function(req, res, next) {
  });
 
  router.get('/posts/categorias', function(req,res){
-  axios.get('http://localhost:7001/posts/type' + '?token=' + req.cookies.access.token)
+  axios.get('http://localhost:7001/posts/type' + '?level='+ req.cookies.access.level+'&user='+ req.cookies.access.username + '&token=' + req.cookies.access.token)
   .then(dados => res.render('categorias', {types:dados.data, access:req.cookies.access}))
   .catch(e => res.render('error', {error:e,access:req.cookies.access}))
  })
