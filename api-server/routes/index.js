@@ -30,7 +30,7 @@ function insertNoticia(res, not){
 
 }
 // Procurar user :id
-router.get('/posts/:id', function(req, res, next) {
+router.get('/posts/byId/:id', function(req, res, next) {
   PostControl.lookUp(req.params.id)
     .then(data => {
       res.status(200).jsonp(data[0])
@@ -50,6 +50,22 @@ router.get('/posts', function(req,res,next) {
     }
     else{
       PostControl.lookUp10date(req.query.user)
+      .then(data =>{
+        res.status(200).jsonp({posts : get10elements(req.query.page,data), size: data.length})
+      })
+      .catch(err => res.status(500).jsonp(err))
+    }
+  }
+  else if(req.query.type!=null){
+    if(req.query.level == "admin"){
+      PostControl.lookUp10typeAdmin(req.query.type)
+      .then(data =>{
+        res.status(200).jsonp({posts : get10elements(req.query.page,data), size: data.length})
+      })
+      .catch(err => res.status(500).jsonp(err))
+    }
+    else{
+      PostControl.lookUp10type(req.query.type)
       .then(data =>{
         res.status(200).jsonp({posts : get10elements(req.query.page,data), size: data.length})
       })
@@ -178,12 +194,20 @@ router.put('/posts/rating/:id', function(req, res, next) {
     .catch(err => res.status(500).jsonp(err))
 });
 
+router.get('/posts/type', function(req,res){
+  PostControl.getCat()
+    .then(data => res.status(200).jsonp(data))
+    .catch(err => res.status(500).jsonp(err))
+})
 
 
-function get10elements(number,arr){
+
+function get10elements(num,arr){
   var array = []
-  for (let index = (number-1)*10; index < arr.length; index++) {
-    array[index] = arr[index];
+  var number = parseInt(num,10)
+  var i = 0
+  for (let index = (number-1)*10 ; index < arr.length; index++, i++) {
+    array[i] = arr[index];
   }
   return array
 }

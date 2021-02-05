@@ -131,21 +131,46 @@ router.post('/posts/rating/:id' , function(req,res,next){
 // Busca da primeira página de posts
 router.get('/posts', function(req, res, next) {
   if (req.cookies.access == null)  res.redirect('/login')
+  
   var t = req.cookies.access.token;
-  axios.get('http://localhost:7001/posts?page=1&user='+ req.cookies.access.username + '&level='+ req.cookies.access.level +'&token=' + t)
+  if(req.query.order=="rating"){
+    axios.get('http://localhost:7001/posts?order=rating&page=1&user='+ req.cookies.access.username + '&level='+ req.cookies.access.level +'&token=' + t)
     .then(dados => {
       var paginas = (dados.data.size / 10)+1
-      res.render('tabela_posts', {posts:dados.data.posts, pages:paginas, current_page:1,access:req.cookies.access})
+      res.render('tabela_posts', {posts:dados.data.posts, pages:paginas, current_page:1,access:req.cookies.access, order:"rating"})
     })
     .catch(e => res.render('error', {error:e,access:req.cookies.access}))
+  }
+  else if(req.query.type!=null){
+    axios.get('http://localhost:7001/posts?type='+ req.query.type+'&page=1&user='+ req.cookies.access.username + '&level='+ req.cookies.access.level +'&token=' + t)
+    .then(dados => {
+      var paginas = (dados.data.size / 10)+1
+      res.render('tabela_posts', {posts:dados.data.posts, pages:paginas, current_page:1,access:req.cookies.access, order:"none"})
+    })
+    .catch(e => res.render('error', {error:e,access:req.cookies.access}))
+  }
+  else{
+    axios.get('http://localhost:7001/posts?order=date&page=1&user='+ req.cookies.access.username + '&level='+ req.cookies.access.level +'&token=' + t)
+    .then(dados => {
+      var paginas = (dados.data.size / 10)+1
+      res.render('tabela_posts', {posts:dados.data.posts, pages:paginas, current_page:1,access:req.cookies.access, order:"date"})
+    })
+    .catch(e => res.render('error', {error:e,access:req.cookies.access}))
+  }
+
  });
 
+ router.get('/posts/categorias', function(req,res){
+  axios.get('http://localhost:7001/posts/type' + '?token=' + req.cookies.access.token)
+  .then(dados => res.render('categorias', {types:dados.data, access:req.cookies.access}))
+  .catch(e => res.render('error', {error:e,access:req.cookies.access}))
+ })
 
 // Busca do post :id
 router.get('/posts/:id', function(req, res, next) {
   if (req.cookies.access == null)  res.redirect('/login')
  var t = req.cookies.access.token;
- axios.get('http://localhost:7001/posts/'+ req.params.id + '?token=' + t)
+ axios.get('http://localhost:7001/posts/byId/'+ req.params.id + '?token=' + t)
    .then(dados => res.render('single_post', {post:dados.data, access:req.cookies.access}))
    .catch(e => res.render('error', {error:e,access:req.cookies.access}))
 });
@@ -155,13 +180,25 @@ router.get('/posts/:id', function(req, res, next) {
 router.get('/posts/page/:page', function(req, res, next) {
   if (req.cookies.access == null)  res.redirect('/login')
   var t = req.cookies.access.token;
-  axios.get('http://localhost:7001/posts?page='+ req.params.page + '?user='+ req.cookies.access.username + '&level='+ req.cookies.access.level+ '&token=' + t)
+  if(req.query.order=="rating"){
+    axios.get('http://localhost:7001/posts?order=rating&page='+ req.params.page + '&user='+ req.cookies.access.username + '&level='+ req.cookies.access.level+ '&token=' + t)
     .then(dados => {
-      var paginas = (dados.data.size / 10)+1
-      res.render('tabela_posts', {posts:dados.data.posts , pages:paginas, current_page:req.params.page,access:req.cookies.access})
+      var paginas = (dados.data.size / 10) +1
+      res.render('tabela_posts', {posts:dados.data.posts , pages:paginas, current_page:req.params.page,access:req.cookies.access,order:"rating"})
 
     })
     .catch(e => res.render('error', {error:e,access:req.cookies.access}))
+  }
+  else{
+    axios.get('http://localhost:7001/posts?order=date&page='+ req.params.page + '&user='+ req.cookies.access.username + '&level='+ req.cookies.access.level+ '&token=' + t)
+    .then(dados => {
+      var paginas = parseInt(dados.data.size / 10, 10) +1
+      res.render('tabela_posts', {posts:dados.data.posts , pages:paginas, current_page:req.params.page,access:req.cookies.access,order:"date"})
+
+    })
+    .catch(e => res.render('error', {error:e,access:req.cookies.access}))
+  }
+
 });
 
 

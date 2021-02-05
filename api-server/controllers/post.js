@@ -212,6 +212,70 @@ module.exports.lookUp10userAdmin = u => {
     }
     }}]).sort({upload_date : -1})
 }
+
+
+
+module.exports.lookUp10type = u => {
+    return Post.aggregate([
+        {$match: {
+            $and:[{type:u}, {restrictions:"public"}]
+        }},
+        {$project:{
+        _id:"$_id",
+        file:"$file",
+        id_user:"$id_user",
+        titulo:"$titulo",
+        upload_date:"$upload_date",
+        rating:{
+            total:{$sum:{$sum:"$estrelas.rating"}},
+            num:{$size:"$estrelas"},
+            stars:{ 
+                $cond:{if: {$eq: [{$size:"$estrelas"}, 0]} , then: 0, 
+                else:{$divide: [{$sum:{$sum:"$estrelas.rating"}},{$size:"$estrelas"}]}}
+            }
+    }
+    }}]).sort({upload_date : -1})
+}
+
+module.exports.lookUp10typeAdmin = u => {
+    return Post.aggregate([
+        {$match: {type:u}},
+        {$project:{
+        _id:"$_id",
+        file:"$file",
+        id_user:"$id_user",
+        titulo:"$titulo",
+        upload_date:"$upload_date",
+        rating:{
+            total:{$sum:{$sum:"$estrelas.rating"}},
+            num:{$size:"$estrelas"},
+            stars:{ 
+                $cond:{if: {$eq: [{$size:"$estrelas"}, 0]} , then: 0, 
+                else:{$divide: [{$sum:{$sum:"$estrelas.rating"}},{$size:"$estrelas"}]}}
+            }
+    }
+    }}]).sort({upload_date : -1})
+}
+
+module.exports.getCat = () => {
+    return Post.aggregate([
+        {
+            $group: {
+                _id: null,
+                type: { $addToSet: "$type" }
+            }
+        },
+        {
+            $unwind: "$type"
+        },
+        {
+            $project: {
+                _id: 0,
+                type:1
+            }
+        }
+    ]);
+}
 // Inserir o post u
 module.exports.insert = u => {
     var newPost = new Post(u)
