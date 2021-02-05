@@ -21,6 +21,13 @@ var upload = multer({storage:storage})
 
 // POSTS ---------------------------------------
 
+router.get('/', (req,res) => res.redirect('/home'))
+
+router.get('/home', function(req,res){
+  axios.get('http://localhost:7001/noticias?token=' + req.cookies.access.token)
+    .then(dados => res.render('home', {noticias:dados.data, access:req.cookies.access}))
+    .catch(e => res.render('error', {error:e,access:req.cookies.access}))
+})
 
 // Página de novo post
 router.get('/posts/new' , function(req,res,next){

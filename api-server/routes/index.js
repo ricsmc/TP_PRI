@@ -126,16 +126,26 @@ router.put('/posts/comment/:id', (req,res) => {
 router.post('/posts', (req,res) => {
   PostControl.insert(req.body)
     .then(data => {
-      var json = {
-        type:data.type,
-        titulo:data.titulo,
-        id_user:data.id_user,
-        upload_date:data.upload_date
+      if(data.restrictions=="public"){
+        var json = {
+          type:data.type,
+          titulo:data.titulo,
+          id_user:data.id_user,
+          upload_date:data.upload_date,
+          id_post:data._id
+        }
+        insertNoticia(res,json)
       }
-      insertNoticia(res,json)
+      
       res.status(201).jsonp(data)
     
     })
+    .catch(err => res.status(500).jsonp({error:err}))
+})
+
+router.get('/noticias', function(req,res){
+  NotControl.list()
+    .then(data => res.status(200).jsonp(data))
     .catch(err => res.status(500).jsonp({error:err}))
 })
 

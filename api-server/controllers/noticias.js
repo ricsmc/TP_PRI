@@ -2,7 +2,7 @@ var mongoose = require('mongoose')
 var Noticia = require('../models/noticias')
 
 module.exports.list = ()=> {
-    return Noticia.find().exec()
+    return Noticia.find().sort({upload_date:-1}).exec()
 }
 
 module.exports.oldest = () => {
