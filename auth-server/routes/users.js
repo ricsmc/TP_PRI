@@ -61,4 +61,10 @@ router.put('/:id', (req,res) => {
     .catch(err => res.status(500).jsonp(err))
 })
 
+router.post('/search', (req,res) => {
+  UserControl.search(req.body.field)
+  .then(data => res.status(201).jsonp(data))
+  .catch(err => res.status(500).jsonp(err))
+})
+
 module.exports = router;

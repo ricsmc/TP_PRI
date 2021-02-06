@@ -133,7 +133,26 @@ router.get('/posts/user/:id', function(req,res,next) {
 
 router.put('/posts/comment/:id', (req,res) => {
   PostControl.insertComment(req.body,req.params.id)
-    .then(data => res.status(201).jsonp(data))
+  .then(data => {
+    PostControl.lookUp(req.params.id)
+      .then(da => {
+        if(data.restrictions=="public"){
+          var json = {
+            type:"comentario",
+            titulo:da[0].titulo,
+            id_user:req.body.comment.username,
+            upload_date:data.data,
+            id_post:req.params.id
+          }
+          insertNoticia(res,json)
+      }
+    
+    })
+    .catch(err => res.status(500).jsonp({error:err}))
+    
+    res.status(201).jsonp(data)
+  
+  })
     .catch(err => res.status(500).jsonp({error:err}))
 })
 
@@ -144,7 +163,7 @@ router.post('/posts', (req,res) => {
     .then(data => {
       if(data.restrictions=="public"){
         var json = {
-          type:data.type,
+          type:"post",
           titulo:data.titulo,
           id_user:data.id_user,
           upload_date:data.upload_date,

@@ -256,7 +256,13 @@ router.post('/user/edit/:id' , upload.single('myFile'), function(req,res){
 
 // Página de login
 router.get('/login', function(req,res){
-  res.render('login-form');
+  if(req.query.err==null){
+    res.render('login-form');
+  }
+  else {
+    res.render('login-form', {err:'true'})
+  }
+  
 })
 
 router.get('/logout', function(req,res){
@@ -273,7 +279,14 @@ router.post('/login', function(req,res){
       res.redirect('/posts')
     })
     .catch(e => {
-      res.render('error', {error:e})
+      console.log(e.response.status)
+      if(e.response.status == 401){
+        res.redirect('/login?err=true')
+      }
+      else{
+        res.render('error', {error:e})
+      }
+      
     })
 })
 

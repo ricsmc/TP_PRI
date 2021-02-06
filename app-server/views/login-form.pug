@@ -11,6 +11,8 @@ html
     .w3-container.w3-blue
         h3 Introduza as suas credênciais
     form.w3-container(action='/login' method='POST')
+        if(err == 'true')
+          p.w3-text-red Username ou password incorrectos!
         label Username:
         input.w3-input(type="text" name="username")
 

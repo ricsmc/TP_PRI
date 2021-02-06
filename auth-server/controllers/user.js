@@ -32,6 +32,10 @@ module.exports.edit = (id,u) => {
     return User.findOneAndUpdate({username:id}, u, {new: true})
 }
 
+module.exports.search = s => {
+    return User.find({username: {$regex: s}}).exec()
+}
+
 
 // Funções sobre notificações ---------------
 
