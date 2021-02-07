@@ -97,14 +97,14 @@ router.post('/posts/search', function(req,res,next){
   if(req.query.level=="admin"){
     PostControl.lookUp10tagsAdmin(req.body.tags)
       .then(data =>{
-        res.status(200).jsonp({posts : get10elements(req.query.page,data), size: data.length})
+        res.status(200).jsonp({posts : data, size: data.length})
       })
       .catch(err => res.status(500).jsonp(err))
   }
   else{
     PostControl.lookUp10tags(req.body.tags,req.query.user)
       .then(data =>{
-        res.status(200).jsonp({posts : get10elements(req.query.page,data), size: data.length})
+        res.status(200).jsonp({posts : data, size: data.length})
       })
       .catch(err => res.status(500).jsonp(err))
   }
@@ -233,7 +233,7 @@ function get10elements(num,arr){
   var array = []
   var number = parseInt(num,10)
   var i = 0
-  for (let index = (number-1)*10 ; index < arr.length; index++, i++) {
+  for (let index = (number-1)*10 ; index < arr.length && i<10; index++, i++) {
     array[i] = arr[index];
   }
   return array

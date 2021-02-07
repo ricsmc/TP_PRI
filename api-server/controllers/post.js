@@ -58,6 +58,7 @@ module.exports.lookUp10date = u => {
 
 
 module.exports.lookUp10tags = (t,u) => {
+    var array = t.split(" ")
     return Post.aggregate([
         {$match:{
             $and:[
@@ -65,7 +66,10 @@ module.exports.lookUp10tags = (t,u) => {
                     {id_user:u},
                     {restrictions:"public"}
                 ]},
-                {tags:{$elemMatch:{$in:t}}}
+                {$or:[
+                    {tags:{$elemMatch:{$in:array}}} ,
+                    {titulo: {$regex: t}}
+                ]}
             ]
         }},
         {$project:{
@@ -89,8 +93,14 @@ module.exports.lookUp10tags = (t,u) => {
 }
 
 module.exports.lookUp10tagsAdmin = t => {
+    var array = t.split(" ")
     return Post.aggregate([
-        {$match:{tags:{$elemMatch:{$in:t}}}},
+        {$match:
+            {$or:[
+                {tags:{$elemMatch:{$in:array}}} ,
+                {titulo: {$regex: t}}
+            ]}
+        },
         {$project:{
         tags:"$tags",
         _id:"$_id",

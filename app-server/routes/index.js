@@ -3,8 +3,6 @@ var router = express.Router();
 var axios = require('axios');
 var path = require('path')
 var fs = require('fs')
-var jsonfile = require('jsonfile')
-var child_process = require("child_process");
 var archiver = require('archiver');
 
 var multer = require('multer')
@@ -80,15 +78,33 @@ router.get('/download/:filename', function(req, res){
 
 
 router.post('/posts/search' , function(req,res,next){
-  req.body.tags = req.body.tags.split(" ")
   console.log(req.body)
-  req.body.id_user = req.cookies.access.username
-  axios.post('http://localhost:7001/posts/search?page=1&user='+ req.cookies.access.username + '&level='+ req.cookies.access.level +'&token=' + req.cookies.access.token, req.body)
+  
+  var pag;
+  if(req.query.page==null) pag=1
+  else pag = req.query.page
+  if(req.query.users!=null){
+    axios.post('http://localhost:7001/users/search?token=' + req.cookies.access.token, req.body)
     .then(dados => {
-      var paginas = (dados.data.size / 10)+1
-      res.render('tabela_posts', {posts:dados.data.posts, pages:paginas, current_page:1,access:req.cookies.access})
+      var resto = 1
+      if(dados.data.size%10 == 0) resto = 0
+      var paginas = (dados.data.size / 10)+resto
+      res.render('user_search', {users:dados.data.users, pages:paginas, current_page:pag,access:req.cookies.access, order:"none", search:true, value:req.body})
     })
     .catch(e => res.render('error', {error:e,access:req.cookies.access}))
+  }
+  else{
+    req.body.id_user = req.cookies.access.username
+    axios.post('http://localhost:7001/posts/search?page='+ pag+'&user='+ req.cookies.access.username + '&level='+ req.cookies.access.level +'&token=' + req.cookies.access.token, req.body)
+    .then(dados => {
+      var resto = 1
+      if(dados.data.size%10 == 0) resto = 0
+      var paginas = (dados.data.size / 10)+resto
+      res.render('tabela_posts', {posts:dados.data.posts, pages:paginas, current_page:pag,access:req.cookies.access, order:"none", search:true, value:req.body})
+    })
+    .catch(e => res.render('error', {error:e,access:req.cookies.access}))
+  }
+  
 })
 
 // Remover o post :id
@@ -136,7 +152,9 @@ router.get('/posts', function(req, res, next) {
   if(req.query.order=="rating"){
     axios.get('http://localhost:7001/posts?order=rating&page=1&user='+ req.cookies.access.username + '&level='+ req.cookies.access.level +'&token=' + t)
     .then(dados => {
-      var paginas = (dados.data.size / 10)+1
+      var resto = 1
+      if(dados.data.size%10 == 0) resto = 0
+      var paginas = (dados.data.size / 10)+resto
       res.render('tabela_posts', {posts:dados.data.posts, pages:paginas, current_page:1,access:req.cookies.access, order:"rating"})
     })
     .catch(e => res.render('error', {error:e,access:req.cookies.access}))
@@ -144,7 +162,9 @@ router.get('/posts', function(req, res, next) {
   else if(req.query.type!=null){
     axios.get('http://localhost:7001/posts?type='+ req.query.type+'&page=1&user='+ req.cookies.access.username + '&level='+ req.cookies.access.level +'&token=' + t)
     .then(dados => {
-      var paginas = (dados.data.size / 10)+1
+      var resto = 1
+      if(dados.data.size%10 == 0) resto = 0
+      var paginas = (dados.data.size / 10)+resto
       res.render('tabela_posts', {posts:dados.data.posts, pages:paginas, current_page:1,access:req.cookies.access, order:"none"})
     })
     .catch(e => res.render('error', {error:e,access:req.cookies.access}))
@@ -152,7 +172,9 @@ router.get('/posts', function(req, res, next) {
   else{
     axios.get('http://localhost:7001/posts?order=date&page=1&user='+ req.cookies.access.username + '&level='+ req.cookies.access.level +'&token=' + t)
     .then(dados => {
-      var paginas = (dados.data.size / 10)+1
+      var resto = 1
+      if(dados.data.size%10 == 0) resto = 0
+      var paginas = (dados.data.size / 10)+resto
       res.render('tabela_posts', {posts:dados.data.posts, pages:paginas, current_page:1,access:req.cookies.access, order:"date"})
     })
     .catch(e => res.render('error', {error:e,access:req.cookies.access}))
@@ -171,10 +193,23 @@ router.get('/posts/:id', function(req, res, next) {
   if (req.cookies.access == null)  res.redirect('/login')
  var t = req.cookies.access.token;
  axios.get('http://localhost:7001/posts/byId/'+ req.params.id + '?token=' + t)
-   .then(dados => res.render('single_post', {post:dados.data, access:req.cookies.access}))
+   .then(dados => {
+    console.log(dados.data.comment)
+    dados.data.comment.sort(GetSortOrder("data"))
+     res.render('single_post', {post:dados.data, access:req.cookies.access})
+    })
    .catch(e => res.render('error', {error:e,access:req.cookies.access}))
 });
-
+function GetSortOrder(prop) {    
+  return function(a, b) {    
+      if (a[prop] > b[prop]) {    
+          return -1;    
+      } else if (a[prop] < b[prop]) {    
+          return 1;    
+      }    
+      return 0;    
+  }    
+} 
 
 // Busca da página de posts :page
 router.get('/posts/page/:page', function(req, res, next) {
@@ -183,7 +218,9 @@ router.get('/posts/page/:page', function(req, res, next) {
   if(req.query.order=="rating"){
     axios.get('http://localhost:7001/posts?order=rating&page='+ req.params.page + '&user='+ req.cookies.access.username + '&level='+ req.cookies.access.level+ '&token=' + t)
     .then(dados => {
-      var paginas = (dados.data.size / 10) +1
+      var resto = 1
+      if(dados.data.size%10 == 0) resto = 0
+      var paginas = (dados.data.size / 10) +resto
       res.render('tabela_posts', {posts:dados.data.posts , pages:paginas, current_page:req.params.page,access:req.cookies.access,order:"rating"})
 
     })
@@ -192,7 +229,9 @@ router.get('/posts/page/:page', function(req, res, next) {
   else{
     axios.get('http://localhost:7001/posts?order=date&page='+ req.params.page + '&user='+ req.cookies.access.username + '&level='+ req.cookies.access.level+ '&token=' + t)
     .then(dados => {
-      var paginas = parseInt(dados.data.size / 10, 10) +1
+      var resto = 1
+      if(dados.data.size%10 == 0) resto = 0
+      var paginas = parseInt(dados.data.size / 10, 10) +resto
       res.render('tabela_posts', {posts:dados.data.posts , pages:paginas, current_page:req.params.page,access:req.cookies.access,order:"date"})
 
     })
@@ -209,7 +248,6 @@ router.get('/posts/page/:page', function(req, res, next) {
 router.get('/user/:id', function(req, res, next) {
   if (req.cookies.access == null)  res.redirect('/login')
   if(req.query.level!=null){
-    console.log('Ois')
     var json = { level: req.query.level}
     axios.put('http://localhost:7001/users/'+ req.params.id + '?token=' + req.cookies.access.token, json)
       .then(res.redirect('/user/'+req.params.id))
@@ -218,6 +256,7 @@ router.get('/user/:id', function(req, res, next) {
   var page;
   if (req.query.page==null) {page = 1}
   else {page = req.query.page}
+  console.log(page)
   axios.get('http://localhost:7001/users/' + req.params.id + '?token=' + req.cookies.access.token)
     .then(da => {
       axios.get('http://localhost:7001/posts/user/'+ req.params.id + '?page='+ page +'&token=' + req.cookies.access.token)
@@ -243,7 +282,7 @@ router.post('/user/edit/:id' , upload.single('myFile'), function(req,res){
         res.render('error', {error:e,access:req.cookies.access})
       }
     })
-    req.body.pic = "ok"
+    req.body.pic = true
   }
   
   axios.put('http://localhost:7001/users/'+ req.params.id + '?token=' + req.cookies.access.token, req.body)

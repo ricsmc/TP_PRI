@@ -31,8 +31,9 @@ router.put('/:id', (req,res) => {
 })
 
 router.post('/search', (req,res) => {
-  UserControl.search(req.body.field)
-  .then(data => res.status(201).jsonp(data))
+  console.log(req.body)
+  UserControl.search(req.body.username)
+  .then(data => res.status(201).jsonp({users:data}))
   .catch(err => res.status(500).jsonp(err))
 })
 

@@ -12,6 +12,11 @@ block content
           -newOrder="rating"
         if(order!='none')
           a.w3-button.w3-round(class="b-secondary" href="/posts?order="+ newOrder style="margin-left:10px; margin-bottom:13px") Order by #{newOrder}
+        if(search)
+          form(action="/posts/search?users=true"  method='POST')
+            input(type="hidden" name="username" value=value.tags)
+            input.w3-button.w3-round(type="submit" class="b-secondary" style="margin-left:10px; margin-bottom:13px" value="Utilizadores") 
+          
         table.w3-table.w3-striped.w3-centered
           tr 
             th Nome
@@ -46,45 +51,45 @@ block content
               if(access.level=="admin")
                 td 
                   a(href="/posts/remove/" + i._id) Remover
-
-        .w3-center.mt-3
-          .w3-bar
-            if current_page != 1
-              - var pag = current_page - 1
-              a.w3-button.w3-round(href="/posts/page/"+(pag) + '?order=' + order) &laquo
-            - var i = 1;
-            if pages <= 6
-              while i <= pages
-                if i == current_page
-                  a.w3-button.w3-round(style="background-color:#3b9b9b" href="/posts/page/"+(i) + '?order=' + order) #{i++} 
-                else 
-                  a.w3-button.w3-round(href="/posts/page/"+(i) + '?order=' + order) #{i++} 
-            else 
-              if current_page >= 5
-                a.w3-button.w3-round(href="/posts/page/1" + '?order=' + order) 1
-                if current_page > 5 && pages > 6
-                  a.w3-button.w3-round ...
-              if current_page < 4
-                - i = 1
+        if !search
+          .w3-center.mt-3
+            .w3-bar
+              if current_page != 1
+                - var pag = current_page - 1
+                a.w3-button.w3-round(href="/posts/page/"+(pag) + '?order=' + order) &laquo
+              - var i = 1;
+              if pages <= 6
+                while i <= pages
+                  if i == current_page
+                    a.w3-button.w3-round(style="background-color:#3b9b9b" href="/posts/page/"+(i) + '?order=' + order) #{i++} 
+                  else 
+                    a.w3-button.w3-round(href="/posts/page/"+(i) + '?order=' + order) #{i++} 
               else 
-                - i = current_page - 3
-              - var j = current_page - (-1)
-              if current_page == pages 
-                - --j
-              while i <= j
-                if i == current_page
-                  a.w3-button.w3-round(style="background-color:#3b9b9b") #{i++} 
+                if current_page >= 5
+                  a.w3-button.w3-round(href="/posts/page/1" + '?order=' + order) 1
+                  if current_page > 5 && pages > 6
+                    a.w3-button.w3-round ...
+                if current_page < 4
+                  - i = 1
                 else 
-                  a.w3-button.w3-round(href="/posts/page/"+(i) + '?order=' + order) #{i++}
-              if current_page < 4
-                - i = current_page - (-2)
-                while i <= 5
-                  a.w3-button.w3-round(href="/posts/page/"+(i) + '?order=' + order) #{i++}
-              if current_page <= pages - 3 
-                a.w3-button.w3-round ... 
-              if current_page < pages - 1
-                a.w3-button.w3-round(href="/posts/page/"+(pages) + '?order=' + order) #{pages} 
-          
-            if current_page != pages
-              - var pag = ++current_page 
-              a.w3-button.w3-round(href="/posts/page/"+(pag) + '?order=' + order) &raquo
+                  - i = current_page - 3
+                - var j = current_page - (-1)
+                if current_page == pages 
+                  - --j
+                while i <= j
+                  if i == current_page
+                    a.w3-button.w3-round(style="background-color:#3b9b9b") #{i++} 
+                  else 
+                    a.w3-button.w3-round(href="/posts/page/"+(i) + '?order=' + order) #{i++}
+                if current_page < 4
+                  - i = current_page - (-2)
+                  while i <= 5
+                    a.w3-button.w3-round(href="/posts/page/"+(i) + '?order=' + order) #{i++}
+                if current_page <= pages - 3 
+                  a.w3-button.w3-round ... 
+                if current_page < pages - 1
+                  a.w3-button.w3-round(href="/posts/page/"+(pages) + '?order=' + order) #{pages} 
+            
+              if current_page != pages
+                - var pag = ++current_page 
+                a.w3-button.w3-round(href="/posts/page/"+(pag) + '?order=' + order) &raquo

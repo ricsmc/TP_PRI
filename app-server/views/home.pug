@@ -25,6 +25,8 @@ block content
                           p= 'há ' + parseInt(data / (1000*60*60*24*365),10) + ' anos' 
                         p O user 
                             a(href="/user/"+i.id_user) #{i.id_user}
-                            |  publicou 
+                            if i.type=="comentario"
+                              |  comentou em 
+                            else
+                              |  publicou 
                             a(href="/posts/" + i.id_post) #{i.titulo}
-                        p #{i.type}

@@ -32,14 +32,7 @@ module.exports.edit = (id,u) => {
     return User.findOneAndUpdate({username:id}, u, {new: true})
 }
 
-module.exports.search = s => {
-    return User.find({username: {$regex: s}}).exec()
+module.exports.search = (s) => {
+    return User.find({username: {$regex: s}}).select({username:1}).exec()
 }
 
-
-// Funções sobre notificações ---------------
-
-// Inserir Notificação
-module.exports.insertNoti = (c,p) => {
-    return User.findByIdAndUpdate(p,{$push : c},{new:true})
-}

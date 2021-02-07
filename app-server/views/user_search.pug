@@ -1,0 +1,13 @@
+extends layout
+
+block content
+  .row
+    .col-md-11.mx-auto
+      .pt-5.pb-4.cover
+        h1(style="display:inline") Users
+        form(action="/posts/search"  method='POST')
+            input(type="hidden" name="tags" value=value.username)
+            input.w3-button.w3-round(type="submit" class="b-secondary" style="margin-left:10px; margin-bottom:13px" value="Posts") 
+        ul 
+            for i in users
+                a(href="/user/" + i.username) #{i.username}
