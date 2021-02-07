@@ -38,6 +38,10 @@ router.post('/posts' , upload.array('myFiles') ,function(req,res,next){
   req.body.id_user = req.cookies.access.username
   axios.post('http://localhost:7001/posts?token=' + req.cookies.access.token, req.body)
     .then(dados => {
+      var dir = __dirname + '/../public/fileStore/'
+      if (!fs.existsSync(dir)) {
+        fs.mkdirSync(dir);
+      }    
       const output = fs.createWriteStream(__dirname + '/../public/fileStore/' + dados.data._id + '.zip');
         const archive = archiver('zip', {
           zlib: { level: 9 } // Sets the compression level.
@@ -264,6 +268,10 @@ router.get('/user/:id', function(req, res, next) {
 
 router.post('/user/edit/:id' , upload.single('myFile'), function(req,res){
   if(req.file!=null){
+    var dir = __dirname + '/../public/profilePic/'
+      if (!fs.existsSync(dir)) {
+        fs.mkdirSync(dir);
+      }
     let quartinePath = __dirname + '/../' + req.file.path
     var extension = req.file.originalname.split('.')[1]
     let newPath = __dirname + '/../public/profilePic/' + req.params.id + '.' + extension
