@@ -9,6 +9,7 @@ block content
           form.w3-container(action='/user/edit/' + user.username method='POST' enctype="multipart/form-data")
             label Descrição:
             input.w3-input(type='text' name="desc")
+            label Foto de Perfil :
             input#myFile.mt-3(type='file' name='myFile')
             input.w3-button.w3-round-large.mt-3.mb-3(class="b-secondary" type="submit" value="Submeter")
     .row
@@ -18,7 +19,7 @@ block content
           .px-4.pt-0.pb-4.cover
             .media.align-items-end.profile-head
               .profile.mr-3
-                if user.pic == "ok"
+                if user.pic 
                   img.rounded.mb-2(class='pfp' src='/profilePic/' + user.username + '.jpg' )
                 else
                   img.rounded.mb-2(class='pfp' src='https://t4.ftcdn.net/jpg/00/64/67/63/360_F_64676383_LdbmhiNM6Ypzb3FM4PPuFP9rHe7ri8Ju.jpg' alt='...')
