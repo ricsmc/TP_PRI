@@ -1,8 +1,8 @@
 extends layout
 
 block content
-    h1 Criar um novo post
-    form.w3-container(action='/posts' method='POST' enctype="multipart/form-data")
+    h1.ml-5.mb-3 Criar um novo post
+    form.w3-container.ml-3(action='/posts' method='POST' enctype="multipart/form-data")
         label Tipo:
         input.w3-input(type='text' name="type")
 
@@ -16,12 +16,13 @@ block content
         input.w3-input(type='text' name="file")
         
         label Restrições:
-        input.w3-check(type='checkbox' value="public" checked='checked' name="restrictions")
-        label Public
-        input.w3-check(type='checkbox' value="private" name="restrictions")
-        label Private
-        label Selecionar ficheiros:
-        input#myFile(type='file' name='myFiles' multiple)
+        input.w3-check.ml-3(type='checkbox' value="public" checked='checked' name="restrictions")
+        label.ml-1 Public
+        input.w3-check.ml-3(type='checkbox' value="private" name="restrictions")
+        label.ml-1 Private
+        p
+        label.mr-3 Selecionar ficheiros:
+        input#myFile(type='file' name='myFiles' multiple style="display:inline")
         
-
-        input.w3-btn-.w3-round-large.w3-white.w3-border(type="submit" value="Submeter")
+        p
+        input.w3-button.w3-round.btn-block(class="b-primary" type="submit" value="Submeter" style="width:110px")

@@ -19,35 +19,38 @@ block content
             .media.align-items-end.profile-head
               .profile.mr-3
                 if user.pic == "ok"
-                  img.rounded.mb-2.img-thumbnail(src='/profilePic/' + user.username + '.jpg')
+                  img.rounded.mb-2(class='pfp' src='/profilePic/' + user.username + '.jpg' )
                 else
-                  img.rounded.mb-2.img-thumbnail(src='https://t4.ftcdn.net/jpg/00/64/67/63/360_F_64676383_LdbmhiNM6Ypzb3FM4PPuFP9rHe7ri8Ju.jpg' alt='...' width='130')
-                button.w3-button.w3-white.w3-border.w3-border-blue-grey.w3-round-large.btn-block(onclick="document.getElementById('id01').style.display='block'") Edit 
-              .media-body.mb-5
-                h4.mt-0.mb-0 #{user.username}
+                  img.rounded.mb-2(class='pfp' src='https://t4.ftcdn.net/jpg/00/64/67/63/360_F_64676383_LdbmhiNM6Ypzb3FM4PPuFP9rHe7ri8Ju.jpg' alt='...')
+                button.w3-button.w3-round-large.btn-block(class="b-primary" onclick="document.getElementById('id01').style.display='block'") Edit 
+              .media-body(class="nome")
+                h3.mt-0.mb-0 #{user.username}
                 p.small.mb-4
-                  i.fas.fa-map-marker-alt.mr-2
+                  i.fas.fa-map-marker-alt
                   | #{user.filiation}
-          .bg-light.p-4.d-flex.text-center
+
+          .p-4.d-flex.text-center
               ul.list-inline.mb-0
                   li.list-inline-item
-                    
 
           .py-4
            if(access.level=="admin" && access.username!=user.username)
-            h5.mr-5 Mudar permissões:
-            .px-4.pt-0.pb-4
+            h5(class="sub-titulo" style="display:inline") Mudar permissões:
+            .px-4.pt-0.pb-4(style="display:inline")
              if(user.level!="admin")
-               a.w3-button.w3-white.w3-border.w3-border-blue-grey.w3-round-large(href='/user/'+ user.username + '?level=admin') Admin
+               a.w3-button.w3-round-large(class="b-secondary" href='/user/'+ user.username + '?level=admin') Admin
              if(user.level!="producer")
-               a.w3-button.w3-white.w3-border.w3-border-blue-grey.w3-round-large(href='/user/'+ user.username + '?level=producer') Producer
+               a.w3-button.w3-round-large(class="b-secondary" href='/user/'+ user.username + '?level=producer') Producer
              if(user.level!="consumer")
-               a.w3-button.w3-white.w3-border.w3-border-blue-grey.w3-round-large(href='/user/'+ user.username + '?level=consumer') Consumer
+               a.w3-button.w3-round-large(class="b-secondary" href='/user/'+ user.username + '?level=consumer') Consumer
 
           .py-3
-            h5.mb-0 About
+            h5(class="sub-titulo") About
             .p-4.rounded.shadow-sm.bg-light
-              p.font-italic.mb-0 #{user.desc}
+              if user.desc != ""
+                p.font-italic.mb-0 #{user.desc}
+              else
+                p.font-italic.mb-0(class="no-info") Nenhuma informação a apresentar
           .py-4
              .w3-col.l9.w3-center
           table.w3-table.w3-striped.w3-centered
@@ -59,7 +62,7 @@ block content
                 if(access.level=="admin")
                   th Editar
               for i in posts
-                tr.clickable-row.w3-hover-dark-gray(style="cursor:pointer" data-href="/posts/" + i._id)
+                tr.clickable-row.w3-hover-gray(style="cursor:pointer" data-href="/posts/" + i._id)
                   td= i.titulo
                   - var data = Math.abs(Date.parse(i.upload_date) - new Date())
                   if(data < 1000*60)
@@ -83,23 +86,23 @@ block content
                     td 
                       a(href="/posts/remove/" + i._id) Remover
           
-          .w3-center
-            .w3-bar.w3-border
+          .w3-center.mt-3
+            .w3-bar
               if current_page != 1
                 - var pag = current_page - 1
-                a.w3-button(href="/posts/page/"+(pag)) &laquo
+                a.w3-button.w3-round(href="/posts/page/"+(pag)) &laquo
               - var i = 1;
               if pages <= 6
                 while i <= pages
                   if i == current_page
-                    a.w3-button.w3-blue-grey(href="/posts/page/"+(i)) #{i++} 
+                    a.w3-button.w3-round(style="background-color:#3b9b9b" href="/posts/page/"+(i)) #{i++} 
                   else 
-                    a.w3-button(href="/posts/page/"+(i)) #{i++} 
+                    a.w3-button.w3-round(href="/posts/page/"+(i)) #{i++} 
               else 
                 if current_page >= 5
-                  a.w3-button(href="/posts/page/1") 1
+                  a.w3-button.w3-round(href="/posts/page/1") 1
                   if current_page > 5 && pages > 6
-                    a.w3-button ...
+                    a.w3-button.w3-round ...
                 if current_page < 4
                   - i = 1
                 else 
@@ -109,19 +112,19 @@ block content
                   - --j
                 while i <= j
                   if i == current_page
-                    a.w3-button.w3-blue-grey #{i++} 
+                    a.w3-button.w3-round(style="background-color:#3b9b9b") #{i++} 
                   else 
-                    a.w3-button(href="/posts/page/"+(i)) #{i++}
+                    a.w3-button.w3-round(href="/posts/page/"+(i)) #{i++}
                 if current_page < 4
                   - i = current_page - (-2)
                   while i <= 5
-                    a.w3-button(href="/posts/page/"+(i)) #{i++}
+                    a.w3-button.w3-round(href="/posts/page/"+(i)) #{i++}
                 if current_page <= pages - 3 
                   a.w3-button ... 
                 if current_page < pages - 1
-                  a.w3-button(href="/posts/page/"+(pages)) #{pages} 
+                  a.w3-button.w3-round(href="/posts/page/"+(pages)) #{pages} 
               if current_page != pages
                 - var pag = ++current_page 
-                a.w3-button(href="/posts/page/"+(pag)) &raquo
+                a.w3-button.w3-round(href="/posts/page/"+(pag)) &raquo
       
       
