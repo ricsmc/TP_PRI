@@ -15,7 +15,6 @@ var postSchema = new mongoose.Schema({
     type : String,
     titulo: String,
     descricao: String,
-    file : String,
     restrictions : String,
     upload_date : {type:Date, default: Date.now},
     id_user : String,

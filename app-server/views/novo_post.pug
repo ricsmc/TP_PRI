@@ -12,8 +12,12 @@ block content
         label Descrição:
         input.w3-input(type='text' name="descricao")
 
-        label Filename:
-        input.w3-input(type='text' name="file")
+
+        label Tags:
+        a.w3-button.w3-circle.w3-teal#addTag +
+        input.w3-input(type='text' name="tags")
+        .w3-container#tagLst
+        
         
         label Restrições:
         input.w3-check.ml-3(type='checkbox' value="public" checked='checked' name="restrictions")

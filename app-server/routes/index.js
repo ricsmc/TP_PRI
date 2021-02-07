@@ -211,14 +211,14 @@ router.get('/user/:id', function(req, res, next) {
   if(req.query.level!=null){
     console.log('Ois')
     var json = { level: req.query.level}
-    axios.put('http://localhost:7002/users/'+ req.params.id , json)
+    axios.put('http://localhost:7001/users/'+ req.params.id + '?token=' + req.cookies.access.token, json)
       .then(res.redirect('/user/'+req.params.id))
       .catch(e => res.render('error', {error:e,access:req.cookies.access}))
   }
   var page;
   if (req.query.page==null) {page = 1}
   else {page = req.query.page}
-  axios.get('http://localhost:7002/users/' + req.params.id)
+  axios.get('http://localhost:7001/users/' + req.params.id + '?token=' + req.cookies.access.token)
     .then(da => {
       axios.get('http://localhost:7001/posts/user/'+ req.params.id + '?page='+ page +'&token=' + req.cookies.access.token)
         .then(dados => {
@@ -246,7 +246,7 @@ router.post('/user/edit/:id' , upload.single('myFile'), function(req,res){
     req.body.pic = "ok"
   }
   
-  axios.put('http://localhost:7002/users/'+ req.params.id , req.body)
+  axios.put('http://localhost:7001/users/'+ req.params.id + '?token=' + req.cookies.access.token, req.body)
       .then(res.redirect('/user/'+req.params.id))
       .catch(e => res.render('error', {error:e}))
 })

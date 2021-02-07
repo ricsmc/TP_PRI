@@ -21,5 +21,5 @@ module.exports.count = () => {
 }
 
 module.exports.remove = id => {
-    return Noticia.deleteOne({_id : id}).exec()
+    return Noticia.findByIdAndDelete(id).exec()
 }
