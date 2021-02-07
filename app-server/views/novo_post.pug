@@ -13,8 +13,8 @@ block content
         input.w3-input(type='text' name="descricao")
 
 
-        label Tags:
-        a.w3-button.w3-circle.w3-teal#addTag +
+        label.mr-2 Tags:
+        a.w3-button.w3-round#addTag(class="add-more") Adicionar tag
         input.w3-input(type='text' name="tags")
         .w3-container#tagLst
         
@@ -29,7 +29,7 @@ block content
         
         input#myFile(type='file' name='myFiles' multiple style="display:inline")
         .w3-container#fileLst
-        a.w3-button.w3-circle.w3-teal#addFile +
+        a.w3-button.w3-round(class="add-more")#addFile Adicionar ficheiro
         
         p
         input.w3-button.w3-round.btn-block(class="b-primary" type="submit" value="Submeter" style="width:110px")
