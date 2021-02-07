@@ -26,7 +26,10 @@ block content
         label.ml-1 Private
         p
         label.mr-3 Selecionar ficheiros:
+        
         input#myFile(type='file' name='myFiles' multiple style="display:inline")
+        .w3-container#fileLst
+        a.w3-button.w3-circle.w3-teal#addFile +
         
         p
         input.w3-button.w3-round.btn-block(class="b-primary" type="submit" value="Submeter" style="width:110px")
