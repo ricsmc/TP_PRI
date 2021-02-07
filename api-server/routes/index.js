@@ -7,15 +7,10 @@ var NotControl = require('../controllers/noticias')
 function insertNoticia(res, not){
   NotControl.count()
     .then(data => {
-      console.log(data)
       if(data >= 10){
-        console.log('Oi')
         NotControl.oldest()
         .then(old => {
-          console.log(old)
-
           NotControl.remove(old[0]._id)
-            .then(console.log('Deleted'))
             .catch(err => res.status(500).jsonp({error:err}))
           NotControl.insert(not)
           .catch(err => res.status(500).jsonp({error:err}))

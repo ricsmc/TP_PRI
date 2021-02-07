@@ -34,9 +34,7 @@ router.get('/posts/new' , function(req,res,next){
 
 
 // Post na API com o novo post
-router.post('/posts' , upload.array('myFiles') ,function(req,res,next){
-  console.log('Post ' + JSON.stringify(req.file))
-  
+router.post('/posts' , upload.array('myFiles') ,function(req,res,next){  
   req.body.id_user = req.cookies.access.username
   axios.post('http://localhost:7001/posts?token=' + req.cookies.access.token, req.body)
     .then(dados => {
@@ -77,9 +75,7 @@ router.get('/download/:filename', function(req, res){
 })
 
 
-router.post('/posts/search' , function(req,res,next){
-  console.log(req.body)
-  
+router.post('/posts/search' , function(req,res,next){  
   var pag;
   if(req.query.page==null) pag=1
   else pag = req.query.page
@@ -134,10 +130,8 @@ router.post('/posts/comment/:id' , function(req,res,next){
 
 // Adicionar novo rating ao post :id
 router.post('/posts/rating/:id' , function(req,res,next){
-  console.log(req.body)
   req.body._id = req.cookies.access.username
   req.body.rating = parseInt(req.body.rating)
-  console.log(req.body)
   axios.put('http://localhost:7001/posts/rating/'+ req.params.id +'?token=' + req.cookies.access.token, req.body)
     .then(dados => res.redirect('/posts/'+ req.params.id))
     .catch(e => res.render('error', {error:e,access:req.cookies.access}))
@@ -194,7 +188,6 @@ router.get('/posts/:id', function(req, res, next) {
  var t = req.cookies.access.token;
  axios.get('http://localhost:7001/posts/byId/'+ req.params.id + '?token=' + t)
    .then(dados => {
-    console.log(dados.data.comment)
     dados.data.comment.sort(GetSortOrder("data"))
      res.render('single_post', {post:dados.data, access:req.cookies.access})
     })
@@ -256,13 +249,11 @@ router.get('/user/:id', function(req, res, next) {
   var page;
   if (req.query.page==null) {page = 1}
   else {page = req.query.page}
-  console.log(page)
   axios.get('http://localhost:7001/users/' + req.params.id + '?token=' + req.cookies.access.token)
     .then(da => {
       axios.get('http://localhost:7001/posts/user/'+ req.params.id + '?page='+ page +'&token=' + req.cookies.access.token)
         .then(dados => {
           var paginas = (dados.data.size / 10)+1
-          console.log(req.cookies)
           res.render('user_page', {user:da.data,posts:dados.data.posts,pages:paginas,current_page:page,access:req.cookies.access})
       })
       .catch(e => res.render('error', {error:e,access:req.cookies.access}))
@@ -318,7 +309,6 @@ router.post('/login', function(req,res){
       res.redirect('/posts')
     })
     .catch(e => {
-      console.log(e.response.status)
       if(e.response.status == 401){
         res.redirect('/login?err=true')
       }
